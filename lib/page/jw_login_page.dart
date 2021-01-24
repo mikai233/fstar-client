@@ -572,7 +572,6 @@ class _JwLoginState extends State<JwLogin> with WidgetsBindingObserver {
                   child: TextField(
                     controller: idController,
                     decoration: _buildDecoration(labelText: '身份证号'),
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   ),
                 ),
                 Container(
