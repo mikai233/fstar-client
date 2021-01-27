@@ -99,6 +99,7 @@ class UserDrawer extends StatelessWidget {
               ),
             ),
             onPressed: () {
+              final preIndicatorType = EasyLoading.instance.indicatorType;
               EasyLoading.instance.indicatorType =
                   EasyLoadingIndicatorType.squareCircle;
               EasyLoading.show();
@@ -113,6 +114,7 @@ class UserDrawer extends StatelessWidget {
                 Duration(seconds: 2),
                 () {
                   EasyLoading.showToast('用户数据已清除');
+                  EasyLoading.instance.indicatorType = preIndicatorType;
                 },
               );
             },
@@ -146,6 +148,7 @@ class UserDrawer extends StatelessWidget {
       ..save();
     context.read<CourseMap>()
       ..clearCourse()
+      ..remark = ''
       ..save();
   }
 
