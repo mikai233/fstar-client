@@ -143,7 +143,7 @@ class ToolPage extends StatelessWidget {
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3, //Grid按两列显示
               mainAxisSpacing: 40.0,
-              crossAxisSpacing: 50.0,
+              crossAxisSpacing: 10.0,
               childAspectRatio: 1.0,
             ),
             delegate: SliverChildBuilderDelegate(
@@ -225,6 +225,7 @@ class ToolPage extends StatelessWidget {
                             color: isDarkMode(context)
                                 ? Colors.white
                                 : Colors.black),
+                        textAlign: TextAlign.center,
                       )
                     ],
                     mainAxisAlignment: MainAxisAlignment.spaceAround,

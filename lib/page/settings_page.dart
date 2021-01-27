@@ -406,8 +406,8 @@ class _SettingsPage extends State<SettingsPage> {
         // TODO: Handle this case.
         break;
       // case IdentityType.teacher:
-        // TODO: Handle this case.
-        // break;
+      // TODO: Handle this case.
+      // break;
       default:
         throw UnimplementedError();
     }
@@ -984,12 +984,14 @@ class _SettingsPage extends State<SettingsPage> {
       ),
       ListTile(
         title: Text('隐私政策'),
+        trailing: Icon(Icons.chevron_right),
         onTap: () {
           pushPage(context, PrivacyPolicy());
         },
       ),
       ListTile(
         title: Text('许可'),
+        trailing: Icon(Icons.chevron_right),
         onTap: () {
           pushPage(
             context,
