@@ -930,9 +930,7 @@ Future<T> showModalBottomCourseEditSheet<T>(BuildContext context,
 List<String> calculateGPA(List<ScoreData> scoreData, Predicate predicate) {
   var semesters = Map<String, List<ScoreData>>();
   for (var score in scoreData) {
-    if (semesters[score.semester] == null) {
-      semesters[score.semester] = [];
-    }
+    semesters.putIfAbsent(score.semester, () => []);
     semesters[score.semester].add(score);
   }
   List<String> result = List<String>();
@@ -1115,8 +1113,8 @@ void configRequesterAndParser() {
             Application.courseParser = GraduateCourseParser();
             break;
           // case IdentityType.teacher:
-            // TODO: Handle this case.
-            // break;
+          // TODO: Handle this case.
+          // break;
         }
       }
       break;
