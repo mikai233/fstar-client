@@ -4,6 +4,16 @@
 
 繁星课程表是一款课程表软件，采用Flutter框架开发，包含通用模式和江苏科技大学专有模式
 
+### 关于本项目开发环境
+
+本项目采用flutter dev分支进行开发，由于flutter不同分支api有变动以及版本升级可能导致相关api被废弃，而项目的依赖没有同步进行升级，
+项目运行有可能失败，请自行做相关的调整。文末有本项目可以运行的flutter环境信息以供参考
+
+### 关于跨平台问题
+
+本项目理论上是支持跨平台的，采用dev分支是为了开启Windows和Web平台，由于本项目主要还是在Android和iOS上运行，
+所以Windows和Web平台仅供体验，iOS部分由于我现在手上并没有Mac，所以iOS的部分一些第三方依赖所需要的配置并没有做， 需要自行配置
+
 ### 通用模式
 
 通用模式采用内置浏览器定位到教务系统课表页执行JavaScript解析函数的方法导入课表
@@ -78,7 +88,9 @@
 
 ### 发送课表解析结果 调用如下代码将解析结果发送给繁星课程表
 
-    window.flutter_inappwebview.callHandler('postCourse', JSON.stringify({'course': course, 'remark': remark}));
+```javascript
+window.flutter_inappwebview.callHandler('postCourse', JSON.stringify({'course': course, 'remark': remark}));
+```
 
 > course是一个课程数组 remark为备注信息，可选，会显示到课表底部
 
@@ -88,7 +100,7 @@
 
 ## 以下为江苏科技大学本科生课表解析函数
 
-```
+```javascript
 (function () {
     let course = [];
     let trs = document.querySelectorAll('#kbtable tr');
@@ -148,7 +160,7 @@
         let setResult = new Set(result);
         return Array.from(setResult);
     }
-    
+
     window.flutter_inappwebview.callHandler('postCourse', JSON.stringify({'course': course, 'remark': remark}));
 })();
 ```
@@ -159,76 +171,76 @@
 
 ### 因为研究生系统含有多个iframe，需要用js代码跳转到课表页的iframe执行课表解析函数才能成功导入课表
 
-```
+```javascript
 window.location = 'http://yjsinfo.just.edu.cn/pyxx/pygl/kbcx_xs.aspx';
 ```
 
 ### 课表解析函数
 
-```
+```javascript
 (function () {
     let course = [];
     let trs = document.querySelectorAll('#DataGrid1 tr');
     for (let i = 1; i < trs.length; i++) {
-          let contents = trs[i].querySelectorAll('td');
-          let filterResult = [];
-          contents.forEach(value => {
-              if (value.innerHTML !== '上午' && value.innerHTML !== '下午' && value.innerHTML !== '晚上') {
-                  if (isNaN(parseInt(value.innerHTML))) {
-                      filterResult.push(value);
-                  }
-              }
-          })
-          filterResult.forEach((value, key) => {
-              let rowSpan = value.getAttribute('rowSpan');
-              let c = parse(value.innerHTML, i, key + 1, parseInt(rowSpan));
-              course.push(...c);
-          });
+        let contents = trs[i].querySelectorAll('td');
+        let filterResult = [];
+        contents.forEach(value => {
+            if (value.innerHTML !== '上午' && value.innerHTML !== '下午' && value.innerHTML !== '晚上') {
+                if (isNaN(parseInt(value.innerHTML))) {
+                    filterResult.push(value);
+                }
+            }
+        })
+        filterResult.forEach((value, key) => {
+            let rowSpan = value.getAttribute('rowSpan');
+            let c = parse(value.innerHTML, i, key + 1, parseInt(rowSpan));
+            course.push(...c);
+        });
     }
 
     function parse(content, row, column, rowSpan) {
-          let eachContent = content.split(/<br><br>/);
-          let result = [];
-          eachContent.forEach(value => {
-              let regx = /课程:(.*?)<br>班级:(.*?)<br>\((.*?)\)<br>第(.*?)周; <br>主讲教师:(.*?)/
-              let results = regx.exec(value);
-              if (results != null) {
-                  let id = results[2].trim();
-                  let name = results[1].trim();
-                  let teacher = results[5].trim();
-                  let week = parseWeek(results[4]);
-                  let room = results[3].trim();
-                  let course = {
-                      'name': name,
-                      'id': id,
-                      'classroom': room,
-                      'week': week,
-                      'row': row,
-                      'column': column,
-                      'rowSpan': rowSpan,
-                      'teacher': teacher,
-                  };
-                  result.push(course);
-              }
-          });
-          return result;
+        let eachContent = content.split(/<br><br>/);
+        let result = [];
+        eachContent.forEach(value => {
+            let regx = /课程:(.*?)<br>班级:(.*?)<br>\((.*?)\)<br>第(.*?)周; <br>主讲教师:(.*?)/
+            let results = regx.exec(value);
+            if (results != null) {
+                let id = results[2].trim();
+                let name = results[1].trim();
+                let teacher = results[5].trim();
+                let week = parseWeek(results[4]);
+                let room = results[3].trim();
+                let course = {
+                    'name': name,
+                    'id': id,
+                    'classroom': room,
+                    'week': week,
+                    'row': row,
+                    'column': column,
+                    'rowSpan': rowSpan,
+                    'teacher': teacher,
+                };
+                result.push(course);
+            }
+        });
+        return result;
     }
 
     function parseWeek(rawWeek) {
-          let eachPart = rawWeek.split(',');
-          let result = [];
-          eachPart.forEach(part => {
-              if (part.indexOf('-') !== -1) {
-                  let [begin, end] = part.split('-');
-                  for (let i = Number(begin); i < Number(end) + 1; i++) {
-                      result.push(i);
-                  }
-              } else {
-                  result.push(Number(part));
-              }
-          });
-          let setResult = new Set(result);
-          return Array.from(setResult);
+        let eachPart = rawWeek.split(',');
+        let result = [];
+        eachPart.forEach(part => {
+            if (part.indexOf('-') !== -1) {
+                let [begin, end] = part.split('-');
+                for (let i = Number(begin); i < Number(end) + 1; i++) {
+                    result.push(i);
+                }
+            } else {
+                result.push(Number(part));
+            }
+        });
+        let setResult = new Set(result);
+        return Array.from(setResult);
     }
 
     window.flutter_inappwebview.callHandler('postCourse', JSON.stringify({'course': course}));
@@ -241,14 +253,14 @@ window.location = 'http://yjsinfo.just.edu.cn/pyxx/pygl/kbcx_xs.aspx';
 
 ```
 Doctor summary (to see all details, run flutter doctor -v):
-[√] Flutter (Channel dev, 1.25.0-4.0.pre, on Microsoft Windows [Version 10.0.19042.746], locale zh-CN)
-[√] Android toolchain - develop for Android devices (Android SDK version 30.0.2)
-[√] Chrome - develop for the web
-[√] Visual Studio - develop for Windows (Visual Studio Enterprise 2019 16.8.2)
-[√] Android Studio (version 4.1.0)
-[√] IntelliJ IDEA Ultimate Edition (version 2020.3)
-[√] VS Code (version 1.45.1)
-[√] Connected device (4 available)
+[✓] Flutter (Channel dev, 1.27.0-4.0.pre, on Microsoft Windows [Version 10.0.19042.804], locale zh-CN)
+[✓] Android toolchain - develop for Android devices (Android SDK version 30.0.2)
+[✓] Chrome - develop for the web
+[✓] Visual Studio - develop for Windows (Visual Studio Enterprise 2019 16.8.2)
+[✓] Android Studio (version 4.1.0)
+[✓] IntelliJ IDEA Ultimate Edition (version 2020.3)
+[✓] VS Code (version 1.45.1)
+[✓] Connected device (3 available)
 ```
 
 ## Flutter学习
