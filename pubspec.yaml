@@ -38,7 +38,10 @@ dependencies:
   flutter_neumorphic:
     git: https://github.com/Idean/Flutter-Neumorphic.git
   provider: ^4.3.2+3
-  flutter_staggered_animations: ^0.1.2
+  flutter_staggered_animations:
+    git:
+      url: https://github.com/josh-burton/flutter_staggered_animations.git
+      ref: findAncestorWidgetOfExactType
   flutter_displaymode: ^0.1.1
   flutter_inappwebview: ^4.0.0+4
   device_info: ^1.0.0
@@ -50,7 +53,7 @@ dependencies:
   path_provider: ^1.6.24
   url_launcher: ^5.7.10
   font_awesome_flutter: ^8.11.0
-  pull_to_refresh: ^1.6.3
+  pull_to_refresh: ^1.6.4
   flutter_rounded_date_picker: ^1.0.5+1
   flutter_screenutil: ^4.0.2+1
   just:

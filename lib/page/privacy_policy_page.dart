@@ -8,12 +8,13 @@ class PrivacyPolicy extends StatelessWidget {
         title: Text('服务协议和隐私政策'),
         centerTitle: true,
       ),
-      body: Padding(
+      body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 12),
-        child: ListView(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
+        children: [
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
+            child: Center(
               child: Text(
                 '繁星课程表隐私政策',
                 style: TextStyle(
@@ -22,10 +23,11 @@ class PrivacyPolicy extends StatelessWidget {
                 ),
               ),
             ),
-            Text.rich(
-              TextSpan(
-                children: [
-                  TextSpan(text: '''
+          ),
+          Text.rich(
+            TextSpan(
+              children: [
+                TextSpan(text: '''
 隐私政策内容如下:
 繁星课程表十分重视用户的隐私。您在使用繁星课程表提供的服务时，繁星课程表可能会收集和使用您的信息。繁星课程表希望您通过本《隐私政策》知晓您在使用繁星课程表提供的服务时，繁星课程表将如何收集和保护您的信息。 当您使用繁星课程表提供的任一服务时，即表示您已同意繁星课程表按照本《隐私政策》来合法使用和保护您的信息。
 
@@ -63,12 +65,11 @@ class PrivacyPolicy extends StatelessWidget {
 
 2020年11月27日
 
-                  '''),
-                ],
-              ),
+                '''),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

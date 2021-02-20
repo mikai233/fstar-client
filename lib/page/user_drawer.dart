@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:fluro/fluro.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -218,8 +220,30 @@ class UserDrawer extends StatelessWidget {
             body: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Center(
-                child: Text(
-                  '繁星是一款由个人开发的课程表软件，包含通用适配模式和江苏科技学专有模式，本软件非官方软件，此软件旨在为大家提供更为便捷的校园服务，简洁无广告。数据的请求和解析全部在手机端完成，不经过服务器。',
+                child: Text.rich(
+                  TextSpan(
+                    text:
+                        '繁星是一款由个人开发的课程表软件，包含通用适配模式和江苏科技学专有模式，本软件非官方软件，此软件旨在为大家提供更为便捷的校园服务，简洁无广告。数据的请求和解析全部在手机端完成，不经过服务器。',
+                    children: [
+                      TextSpan(text: '软件开源地址：'),
+                      TextSpan(
+                          text: 'https://github.com/mikai233/fstar-client',
+                          style: TextStyle(
+                            color: Colors.blue,
+                            decoration: TextDecoration.underline,
+                          ),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () async {
+                              final url =
+                                  'https://github.com/mikai233/fstar-client';
+                              if (await canLaunch(url)) {
+                                await launch(url);
+                              } else {
+                                EasyLoading.showToast('打开浏览器遇到问题');
+                              }
+                            })
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -404,7 +428,7 @@ class UserDrawer extends StatelessWidget {
                   boxShadow: [
                     BoxShadow(
                         color: Colors.black26,
-                        offset: Offset(1, 1),
+                        // offset: Offset(1, 1),
                         spreadRadius: .1,
                         blurRadius: .5)
                   ]),
