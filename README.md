@@ -22,19 +22,23 @@
 
 开发者为江苏科技大学教务系统适配的专用模式，包含成绩查询、课表查询、常用工具等功能
 
-![avatar](snapshot/Screenshot_20210120-152721.jpg)
+### APP预览
 
-![avatar](snapshot/Screenshot_20210120-152732.jpg)
-
-![avatar](snapshot/Screenshot_20210120-152747.jpg)
-
-![avatar](snapshot/Screenshot_20210120-152815.jpg)
-
-![avatar](snapshot/Screenshot_20210120-152854.jpg)
-
-![avatar](snapshot/Screenshot_20210120-152909.jpg)
-
-![avatar](snapshot/Screenshot_20210120-152922.jpg)
+<table>
+    <tr>
+        <td style="text-align: center;"><img src="snapshot/Screenshot_20210120-152721.jpg" ></td>
+        <td style="text-align: center;"><img src="snapshot/Screenshot_20210120-152732.jpg" ></td>
+        <td style="text-align: center;"><img src="snapshot/Screenshot_20210120-152747.jpg" ></td>
+    </tr>    
+    <tr>
+        <td style="text-align: center;"><img src="snapshot/Screenshot_20210120-152815.jpg" ></td>
+        <td style="text-align: center;"><img src="snapshot/Screenshot_20210120-152854.jpg" ></td>
+        <td style="text-align: center;"><img src="snapshot/Screenshot_20210120-152909.jpg" ></td>
+    </tr>
+    <tr>
+        <td style="text-align: center;"><img src="snapshot/Screenshot_20210120-152922.jpg" ></td>
+    </tr>
+</table>
 
 ## 繁星课程表适配方法
 
