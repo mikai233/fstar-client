@@ -223,8 +223,9 @@ class UserDrawer extends StatelessWidget {
                 child: Text.rich(
                   TextSpan(
                     text:
-                        '繁星是一款由个人开发的课程表软件，包含通用适配模式和江苏科技学专有模式，本软件非官方软件，此软件旨在为大家提供更为便捷的校园服务，简洁无广告。数据的请求和解析全部在手机端完成，不经过服务器。',
+                        '繁星是一款由个人开发的课程表软件，包含通用适配模式和江苏科技学专有模式，本软件非官方软件，此软件旨在为大家提供更为便捷的校园服务，简洁无广告。数据的请求和解析全部在手机端完成，不经过服务器\n\n',
                     children: [
+                      TextSpan(text: '微信小程序版：打开微信搜索繁星课程表\n\n'),
                       TextSpan(text: '软件开源地址：'),
                       TextSpan(
                           text: 'https://github.com/mikai233/fstar-client',

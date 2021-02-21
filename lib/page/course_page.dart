@@ -6,6 +6,7 @@ import 'package:fstar/model/application.dart';
 import 'package:fstar/model/choose_week_header_status.dart';
 import 'package:fstar/model/course_map.dart';
 import 'package:fstar/model/date_today_data.dart';
+import 'package:fstar/model/fstar_mode_enum.dart';
 import 'package:fstar/model/settings_data.dart';
 import 'package:fstar/model/time_array_data.dart';
 import 'package:fstar/model/week_index_data.dart';
@@ -24,15 +25,13 @@ class CoursePage extends StatefulWidget {
 
 class _CoursePageState extends State<CoursePage>
     with WidgetsBindingObserver, AutomaticKeepAliveClientMixin {
-  // final _refreshController = RefreshController();
   final _height = 70.0;
   final _weekListScrollController = ScrollController();
 
-  // final _refreshScrollController = ScrollController();
   final _pageController = PageController(initialPage: getCurrentWeek());
   final _duration = Duration(milliseconds: 500);
   final _curve = Curves.easeOutQuad;
-  final _dateToday = DateTodayData();
+
   final _buttonWidth = 50.0;
   final _itemWidth = 70.0;
   var _isTapItem = false;
@@ -46,10 +45,8 @@ class _CoursePageState extends State<CoursePage>
   @override
   void dispose() {
     super.dispose();
-    // _refreshController.dispose();
     _weekListScrollController.dispose();
     _pageController.dispose();
-    // _refreshScrollController.dispose();
     WidgetsBinding.instance.removeObserver(this);
   }
 
@@ -58,7 +55,11 @@ class _CoursePageState extends State<CoursePage>
     switch (state) {
       case AppLifecycleState.resumed:
         Log.logger.i('resumed');
-        _dateToday.today();
+        int currentWeek = getCurrentWeek();
+        if (currentWeek != _pageController.page.toInt()) {
+          _pageController.animateToPage(currentWeek,
+              duration: _duration, curve: _curve);
+        }
         break;
       case AppLifecycleState.inactive:
         Log.logger.i('inactive');
@@ -75,66 +76,57 @@ class _CoursePageState extends State<CoursePage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider.value(value: _dateToday),
-        Provider.value(
-          value: _pageController,
-        ),
-      ],
-      builder: (BuildContext context, Widget child) {
-        return Selector3<ChooseWeekHeaderStatus, SettingsData,
-            RefreshController, Tuple4<bool, int, bool, RefreshController>>(
-          selector: (BuildContext context, status, settings, controller) =>
-              Tuple4(status.show, settings.semesterWeek,
-                  settings.tableScrollable, controller),
-          builder: (BuildContext context, data, Widget child) {
-            _animateToCurrentWeekItem(data.item1);
-            return SmartRefresher(
-              header: WaterDropHeader(),
-              controller: data.item4,
-              onRefresh: _onRefresh,
-              child: Column(
-                children: [
-                  AnimatedContainer(
-                    height: data.item1 ? _height : 0,
-                    duration: Duration(milliseconds: 475),
-                    curve: Curves.easeOutQuad,
-                    child: Row(
-                      children: <Widget>[
-                        _buildButton(),
-                        _buildWeekList(),
-                      ],
-                    ),
-                  ),
-                  WeekHeader(),
-                  Divider(
-                    height: 1,
-                    color: Colors.black26,
-                  ),
-                  Expanded(
-                    child: PageView.builder(
-                      controller: _pageController,
-                      physics:
-                          data.item3 ? null : NeverScrollableScrollPhysics(),
-                      itemCount: data.item2,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Selector<SettingsData, Color>(
-                          selector: (_, data) => data.tableBackgroundColor,
-                          builder: (_, value, __) => Container(
-                            child: CourseTable(index: index),
-                            color: value,
-                          ),
-                        );
-                      },
-                      onPageChanged: (page) =>
-                          _onPageChanged(page: page, show: data.item3),
-                    ),
-                  ),
-                ],
+    return Selector3<ChooseWeekHeaderStatus, SettingsData, RefreshController,
+        Tuple4<bool, int, bool, RefreshController>>(
+      selector: (BuildContext context, status, settings, controller) => Tuple4(
+          status.show,
+          settings.semesterWeek,
+          settings.tableScrollable,
+          controller),
+      builder: (BuildContext context, data, Widget child) {
+        _animateToCurrentWeekItem(data.item1);
+        return SmartRefresher(
+          header: WaterDropHeader(),
+          controller: data.item4,
+          onRefresh: _onRefresh,
+          child: Column(
+            children: [
+              AnimatedContainer(
+                height: data.item1 ? _height : 0,
+                duration: Duration(milliseconds: 475),
+                curve: Curves.easeOutQuad,
+                child: Row(
+                  children: <Widget>[
+                    _buildButton(),
+                    _buildWeekList(),
+                  ],
+                ),
               ),
-            );
-          },
+              WeekHeader(),
+              Divider(
+                height: 1,
+                color: Colors.black26,
+              ),
+              Expanded(
+                child: PageView.builder(
+                  controller: _pageController,
+                  physics: data.item3 ? null : NeverScrollableScrollPhysics(),
+                  itemCount: data.item2,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Selector<SettingsData, Color>(
+                      selector: (_, data) => data.tableBackgroundColor,
+                      builder: (_, value, __) => Container(
+                        child: CourseTable(index: index),
+                        color: value,
+                      ),
+                    );
+                  },
+                  onPageChanged: (page) =>
+                      _onPageChanged(page: page, show: data.item3),
+                ),
+              ),
+            ],
+          ),
         );
       },
     );
@@ -234,6 +226,11 @@ class _CoursePageState extends State<CoursePage>
 
   void _onRefresh() async {
     final controller = context.read<RefreshController>();
+    final settings = getSettingsData();
+    if (settings.fStarMode == FStarMode.ThirdParty) {
+      controller.refreshCompleted();
+      return;
+    }
     final user = getUserData();
     if (user.jwAccount == null || user.jwPassword == null) {
       EasyLoading.showToast('没有验证教务系统账号');

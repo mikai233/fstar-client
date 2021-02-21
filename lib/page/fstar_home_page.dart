@@ -8,6 +8,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:fstar/model/application.dart';
 import 'package:fstar/model/choose_week_header_status.dart';
 import 'package:fstar/model/course_map.dart';
+import 'package:fstar/model/date_today_data.dart';
 import 'package:fstar/model/fstar_mode_enum.dart';
 import 'package:fstar/model/navigation_index_data.dart';
 import 'package:fstar/model/settings_data.dart';
@@ -63,6 +64,7 @@ class _FStarHomePageState extends State<FStarHomePage>
   TabController _tabController;
   AnimationController _rotateController;
   final _smartRefreshController = RefreshController();
+  final _dateToday = DateTodayData();
 
   @override
   void initState() {
@@ -132,6 +134,7 @@ class _FStarHomePageState extends State<FStarHomePage>
     switch (state) {
       case AppLifecycleState.resumed:
         Log.logger.i('resumed');
+        _dateToday.today();
         final settings = getSettingsData();
         if (settings.autoCheckUpdate) {
           if (settings.dayFlag == null ||
@@ -164,6 +167,7 @@ class _FStarHomePageState extends State<FStarHomePage>
         ChangeNotifierProvider(create: (_) => NavigationIndexData()),
         ChangeNotifierProvider(create: (_) => TimeArrayData()),
         ChangeNotifierProvider(create: (_) => ChooseWeekHeaderStatus()),
+        ChangeNotifierProvider.value(value: _dateToday),
         Provider.value(value: _smartRefreshController),
       ],
       builder: (BuildContext context, Widget child) => WillPopScope(
@@ -271,15 +275,16 @@ class _FStarHomePageState extends State<FStarHomePage>
   }
 
   _buildTitle() {
-    return Consumer3<NavigationIndexData, WeekIndexData, TimeArrayData>(
-      builder:
-          (BuildContext context, navigation, week, timeArray, Widget child) {
+    return Consumer4<NavigationIndexData, WeekIndexData, TimeArrayData,
+        DateTodayData>(
+      builder: (BuildContext context, navigation, week, timeArray, dateToday,
+          Widget child) {
         if (navigation.index == 1) {
           return Row(
             children: [
               GestureDetector(
                 child: Text(
-                  sameWeek(timeArray.array[week.index * 7], DateTime.now())
+                  sameWeek(timeArray.array[week.index * 7], dateToday.now)
                       ? '第${week.index + 1}周'
                       : '第${week.index + 1}周(非本周)',
                 ),

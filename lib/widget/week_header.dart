@@ -156,12 +156,7 @@ class _WeekHeaderState extends State<WeekHeader> {
       {@required TimeArrayData timeArrayData,
       @required WeekIndexData weekIndexData,
       @required DateTodayData todayData}) {
-    var currentWeek = getCurrentWeek();
-    if (currentWeek == weekIndexData.index) {
-      return '${DateTime.now().month}\n月';
-    } else {
-      return '${timeArrayData.array[weekIndexData.index * 7].month}\n月';
-    }
+    return '${timeArrayData.array[weekIndexData.index * 7].month}\n月';
   }
 }
 
