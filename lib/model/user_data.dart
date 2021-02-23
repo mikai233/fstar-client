@@ -102,6 +102,8 @@ class UserData extends HiveObject with ChangeNotifier {
     _tyPassword = null;
     _syAccount = null;
     _syPassword = null;
+    _vpnAccount = null;
+    _vpnPassword = null;
     notifyListeners();
   }
 

@@ -152,23 +152,26 @@ class GraduateCourseParser extends DefaultCourseParser {
     for (int i = 1; i < trs.length; ++i) {
       final contents = trs[i].querySelectorAll('td');
       final filterResult = contents.where((element) {
-        if (element.innerHtml != '上午' &&
-            element.innerHtml != '下午' &&
-            element.innerHtml != '晚上') {
-          if (int.parse(element.innerHtml) != null) {
-            return true;
-          }
+        if (element.text != '上午' &&
+            element.text != '下午' &&
+            element.text != '晚上' &&
+            (element.text.trim().isEmpty ||
+                int.tryParse(element.text) == null)) {
+          return true;
+        } else {
+          return false;
         }
-        return false;
       }).toList();
       filterResult.forEachIndexed((index, element) {
-        final rowSpan = int.parse(element.attributes['rowSpan']) ?? 2;
-        final courses = _parseTable(
-            innerHtml: element.innerHtml,
-            row: i,
-            column: index + 1,
-            rowSpan: rowSpan);
-        _courseList.addAll(courses);
+        if (element.text.trim().isNotEmpty) {
+          final rowSpan = int.tryParse(element.attributes['rowspan']) ?? 2;
+          final courses = _parseTable(
+              innerHtml: element.innerHtml,
+              row: i,
+              column: index + 1,
+              rowSpan: rowSpan);
+          _courseList.addAll(courses);
+        }
       });
     }
     getSettingsData().unusedCourseColorIndex = _colorIndex;
@@ -184,7 +187,7 @@ class GraduateCourseParser extends DefaultCourseParser {
     int top = 0;
     eachContent.forEach((element) {
       final regex = RegExp(
-          r'课程:(.*?)<br>班级:(.*?)<br>\((.*?)\)<br>第(.*?)周; <br>主讲教师:(.*?)');
+          r'课程:(.*?)<br>班级:(.*?)<br>\((.*?)\)<br>第(.*?)周; <br>主讲教师:(.*)');
       final result = regex.firstMatch(element);
       if (result != null) {
         final name = result[1].trim();
@@ -369,4 +372,46 @@ class SportScoreParser implements Parser {
       _score.add(SportScoreData.fromMap(scoreMap));
     }
   }
+}
+
+//TODO
+class GraduateScoreParser implements DefaultScoreParser {
+  @override
+  void _clear() {}
+
+  @override
+  void action(String content) {
+    final tbody = parse(content).querySelectorAll('.GridBackColor');
+    final degree = tbody.first;
+    final elective = tbody.last;
+    final degreeTrs = degree.querySelectorAll('tr');
+    final degreeScore = List<List<String>>();
+    final electiveScore = List<List<String>>();
+    final otherInfo = Map<String, String>();
+    //remove header
+    degreeTrs.removeAt(0);
+    degreeTrs.forEach((element) {
+      final oneScoreInfo =
+          element.querySelectorAll('td').map((e) => e.text).toList();
+      degreeScore.add(oneScoreInfo);
+    });
+    final electiveTrs = elective.querySelectorAll('tr');
+    //remove header
+    electiveTrs.removeAt(0);
+    electiveTrs.forEach((element) {
+      final oneScoreInfo =
+          element.querySelectorAll('td').map((e) => e.text).toList();
+      electiveScore.add(oneScoreInfo);
+    });
+    final box = parse(content)
+        .querySelectorAll('.box')
+        .last
+        .querySelectorAll('tbody')
+        .first
+        .querySelectorAll('td');
+    debugPrint(box.length.toString());
+  }
+
+  @override
+  final List<ScoreData> scoreList = null;
 }

@@ -22,7 +22,20 @@ class GraduateCourseRequester extends DefaultCourseRequester {
   @override
   Future<String> action() {
     final user = getUserData();
-    return YJS.instance.getCourse(user.jwAccount, user.jwPassword);
+    return YJS.instance
+        .getCourse(username: user.jwAccount, password: user.jwPassword);
+  }
+}
+
+class GraduateVPNCourseRequester extends DefaultCourseRequester {
+  @override
+  Future<String> action() {
+    final user = getUserData();
+    return YJS_VPN.instance.getCourse(
+        username: user.jwAccount,
+        password: user.jwPassword,
+        vpnUsername: user.vpnAccount,
+        vpnPassword: user.vpnPassword);
   }
 }
 
@@ -110,6 +123,27 @@ class VPNSportScoreRequester implements DefaultScoreRequester {
     return VPN.instance.getSportScore(
         username: user.tyAccount,
         password: user.tyPassword,
+        vpnUsername: user.vpnAccount,
+        vpnPassword: user.vpnPassword);
+  }
+}
+
+class GraduateScoreRequester implements DefaultScoreRequester {
+  @override
+  Future<String> action() {
+    final user = getUserData();
+    return YJS.instance
+        .getScore(username: user.jwAccount, password: user.jwPassword);
+  }
+}
+
+class GraduateVPNScoreRequester implements DefaultScoreRequester {
+  @override
+  Future<String> action() {
+    final user = getUserData();
+    return YJS_VPN.instance.getScore(
+        username: user.jwAccount,
+        password: user.jwPassword,
         vpnUsername: user.vpnAccount,
         vpnPassword: user.vpnPassword);
   }

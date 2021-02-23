@@ -1066,51 +1066,72 @@ void configRequesterAndParser() {
       {
         switch (settings.identityType) {
           case IdentityType.undergraduate:
-            switch (settings.systemMode) {
-              case SystemMode.JUST:
-                {
-                  Application.courseRequester = DefaultCourseRequester();
-                  Application.courseParser = DefaultCourseParser();
-                  switch (settings.scoreQueryMode) {
-                    case ScoreQueryMode.DEFAULT:
-                      Application.scoreRequester = DefaultScoreRequester();
-                      Application.scoreParser = DefaultScoreParser();
-                      break;
-                    case ScoreQueryMode.ALTERNATIVE:
-                      Application.scoreRequester = AlternativeScoreRequester();
-                      Application.scoreParser = AlternativeScoreParser();
-                      break;
+            {
+              switch (settings.systemMode) {
+                case SystemMode.JUST:
+                  {
+                    Application.courseRequester = DefaultCourseRequester();
+                    Application.courseParser = DefaultCourseParser();
+                    switch (settings.scoreQueryMode) {
+                      case ScoreQueryMode.DEFAULT:
+                        Application.scoreRequester = DefaultScoreRequester();
+                        Application.scoreParser = DefaultScoreParser();
+                        break;
+                      case ScoreQueryMode.ALTERNATIVE:
+                        Application.scoreRequester =
+                            AlternativeScoreRequester();
+                        Application.scoreParser = AlternativeScoreParser();
+                        break;
+                    }
                   }
-                }
-                break;
-              case SystemMode.VPN:
-                {
-                  Application.courseRequester = VPNCourseRequester();
-                  Application.courseParser = DefaultCourseParser();
-                  switch (settings.scoreQueryMode) {
-                    case ScoreQueryMode.DEFAULT:
-                      Application.scoreRequester = VPNScoreRequester();
-                      Application.scoreParser = DefaultScoreParser();
-                      break;
-                    case ScoreQueryMode.ALTERNATIVE:
-                      Application.scoreRequester =
-                          VPNAlternativeScoreRequester();
-                      Application.scoreParser = AlternativeScoreParser();
-                      break;
+                  break;
+                case SystemMode.VPN:
+                  {
+                    Application.courseRequester = VPNCourseRequester();
+                    Application.courseParser = DefaultCourseParser();
+                    switch (settings.scoreQueryMode) {
+                      case ScoreQueryMode.DEFAULT:
+                        Application.scoreRequester = VPNScoreRequester();
+                        Application.scoreParser = DefaultScoreParser();
+                        break;
+                      case ScoreQueryMode.ALTERNATIVE:
+                        Application.scoreRequester =
+                            VPNAlternativeScoreRequester();
+                        Application.scoreParser = AlternativeScoreParser();
+                        break;
+                    }
                   }
-                }
-                break;
-              case SystemMode.VPN2:
-                // TODO: Handle this case.
-                break;
-              case SystemMode.CLOUD:
-                // TODO: Handle this case.
-                break;
+                  break;
+                case SystemMode.VPN2:
+                  // TODO: Handle this case.
+                  break;
+                case SystemMode.CLOUD:
+                  // TODO: Handle this case.
+                  break;
+              }
             }
             break;
           case IdentityType.graduate:
-            Application.courseRequester = GraduateCourseRequester();
-            Application.courseParser = GraduateCourseParser();
+            {
+              switch (settings.systemMode) {
+                case SystemMode.JUST:
+                  Application.courseRequester = GraduateCourseRequester();
+                  Application.scoreRequester = GraduateScoreRequester();
+                  break;
+                case SystemMode.VPN:
+                  Application.courseRequester = GraduateVPNCourseRequester();
+                  Application.scoreRequester = GraduateVPNScoreRequester();
+                  break;
+                case SystemMode.VPN2:
+                  // TODO: Handle this case.
+                  break;
+                case SystemMode.CLOUD:
+                  // TODO: Handle this case.
+                  break;
+              }
+              Application.courseParser = GraduateCourseParser();
+              Application.scoreParser = GraduateScoreParser();
+            }
             break;
           // case IdentityType.teacher:
           // TODO: Handle this case.

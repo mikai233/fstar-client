@@ -107,51 +107,118 @@ class _JwLoginState extends State<JwLogin> with WidgetsBindingObserver {
       final password = _passwordController.text;
       try {
         final userData = context.read<UserData>();
-        switch (_settings.systemMode) {
-          case SystemMode.JUST:
-            EasyLoading.show(status: '正在验证');
-            await JUST.instance
-                .validate(username: username, password: password);
-            await Future.delayed(Duration(milliseconds: 200));
-            EasyLoading.dismiss();
-            userData
-              ..jwAccount = username
-              ..jwPassword = password
-              ..userNumber = username;
+        switch (_settings.identityType) {
+          case IdentityType.undergraduate:
+            {
+              switch (_settings.systemMode) {
+                case SystemMode.JUST:
+                  {
+                    EasyLoading.show(status: '正在验证');
+                    await JUST.instance
+                        .validate(username: username, password: password);
+                    await Future.delayed(Duration(milliseconds: 200));
+                    EasyLoading.dismiss();
+                    userData
+                      ..jwAccount = username
+                      ..jwPassword = password
+                      ..userNumber = username;
+                  }
+                  break;
+                case SystemMode.VPN:
+                  {
+                    final vpnUsername = _vpnUsernameController.text;
+                    final vpnPassword = _vpnPasswordController.text;
+                    EasyLoading.show(status: '正在验证VPN');
+                    await Future.delayed(Duration(milliseconds: 200));
+                    await VPN.instance.validateVPN(
+                        username: vpnUsername, password: vpnPassword);
+                    EasyLoading.dismiss();
+                    await Future.delayed(Duration(milliseconds: 200));
+                    await VPN.instance.validateJw(
+                        username: username,
+                        password: password,
+                        vpnUsername: vpnUsername,
+                        vpnPassword: vpnPassword);
+                    EasyLoading.show(status: '正在验证教务系统账号');
+                    await Future.delayed(Duration(milliseconds: 200));
+                    EasyLoading.dismiss();
+                    userData
+                      ..vpnAccount = vpnUsername
+                      ..vpnPassword = vpnPassword
+                      ..jwAccount = username
+                      ..jwPassword = password
+                      ..userNumber = username;
+                  }
+                  break;
+                case SystemMode.VPN2:
+                  //TODO
+                  EasyLoading.showToast('待实现');
+                  return;
+                  break;
+                case SystemMode.CLOUD:
+                  //TODO
+                  EasyLoading.showToast('待实现');
+                  return;
+                  break;
+              }
+            }
             break;
-          case SystemMode.VPN:
-            final vpnUsername = _vpnUsernameController.text;
-            final vpnPassword = _vpnPasswordController.text;
-            EasyLoading.show(status: '正在验证VPN');
-            await Future.delayed(Duration(milliseconds: 200));
-            await VPN.instance
-                .validateVPN(username: vpnUsername, password: vpnPassword);
-            EasyLoading.dismiss();
-            await Future.delayed(Duration(milliseconds: 200));
-            await VPN.instance.validateJw(
-                username: username,
-                password: password,
-                vpnUsername: vpnUsername,
-                vpnPassword: vpnPassword);
-            EasyLoading.show(status: '正在验证教务系统账号');
-            await Future.delayed(Duration(milliseconds: 200));
-            EasyLoading.dismiss();
-            userData
-              ..vpnAccount = vpnUsername
-              ..vpnPassword = vpnPassword
-              ..jwAccount = username
-              ..jwPassword = password
-              ..userNumber = username;
-            break;
-          case SystemMode.VPN2:
-            //TODO
-            EasyLoading.showToast('待实现');
-            return;
-            break;
-          case SystemMode.CLOUD:
-            //TODO
-            EasyLoading.showToast('待实现');
-            return;
+          case IdentityType.graduate:
+            {
+              switch (_settings.systemMode) {
+                case SystemMode.JUST:
+                  {
+                    EasyLoading.show(status: '正在验证');
+                    await YJS.instance
+                        .validate(username: username, password: password);
+                    await Future.delayed(Duration(milliseconds: 200));
+                    EasyLoading.dismiss();
+                    userData
+                      ..jwAccount = username
+                      ..jwPassword = password
+                      ..userNumber = username;
+                  }
+                  break;
+                case SystemMode.VPN:
+                  {
+                    {
+                      final vpnUsername = _vpnUsernameController.text;
+                      final vpnPassword = _vpnPasswordController.text;
+                      EasyLoading.show(status: '正在验证VPN');
+                      await Future.delayed(Duration(milliseconds: 200));
+                      await YJS_VPN.instance.validateVPN(
+                          username: vpnUsername, password: vpnPassword);
+                      EasyLoading.dismiss();
+                      await Future.delayed(Duration(milliseconds: 200));
+                      await YJS_VPN.instance.validate(
+                          username: username,
+                          password: password,
+                          vpnUsername: vpnUsername,
+                          vpnPassword: vpnPassword);
+                      EasyLoading.show(status: '正在验证研究生系统账号');
+                      await Future.delayed(Duration(milliseconds: 200));
+                      EasyLoading.dismiss();
+                      userData
+                        ..vpnAccount = vpnUsername
+                        ..vpnPassword = vpnPassword
+                        ..jwAccount = username
+                        ..jwPassword = password
+                        ..userNumber = username;
+                    }
+                  }
+                  break;
+                case SystemMode.VPN2:
+                  // TODO: Handle this case.
+                  EasyLoading.showToast('待实现');
+                  return;
+                  break;
+                case SystemMode.CLOUD:
+                  // TODO: Handle this case.
+                  EasyLoading.showToast('待实现');
+                  return;
+                  break;
+              }
+            }
             break;
         }
         await Future.delayed(Duration(milliseconds: 200));
@@ -203,7 +270,8 @@ class _JwLoginState extends State<JwLogin> with WidgetsBindingObserver {
                     width: MediaQuery.of(context).size.width / 3,
                   )),
             ),
-            if (_settings.systemMode == SystemMode.JUST)
+            if (_settings.systemMode == SystemMode.JUST ||
+                _settings.systemMode == SystemMode.VPN)
               Container(
                 height: 30,
                 margin: const EdgeInsets.symmetric(vertical: 8),

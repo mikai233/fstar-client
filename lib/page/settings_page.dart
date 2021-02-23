@@ -403,7 +403,16 @@ class _SettingsPage extends State<SettingsPage> {
         ]);
         break;
       case IdentityType.graduate:
-        // TODO: Handle this case.
+        config.addAll([
+          Selector<SettingsData, SystemMode>(
+            selector: (_, settingsData) => settingsData.systemMode,
+            builder: (_, mode, __) => ListTile(
+              title: Text('系统访问模式: ${mode.name()}'),
+              trailing: Icon(Icons.chevron_right),
+              onTap: _onSystemModeTap,
+            ),
+          ),
+        ]);
         break;
       // case IdentityType.teacher:
       // TODO: Handle this case.
@@ -437,13 +446,13 @@ class _SettingsPage extends State<SettingsPage> {
                     },
                   ),
                   actions: <Widget>[
-                    FlatButton(
+                    TextButton(
                       child: Text('取消'),
                       onPressed: () {
                         Navigator.pop(context);
                       },
                     ),
-                    FlatButton(
+                    TextButton(
                       child: Text('确定'),
                       onPressed: () {
                         context.read<ThemeColorData>()

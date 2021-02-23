@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:fstar/model/identity_enum.dart';
 import 'package:fstar/model/settings_data.dart';
 import 'package:fstar/model/system_mode_enum.dart';
 import 'package:fstar/model/user_data.dart';
@@ -28,6 +29,70 @@ enum ToolItem {
   schoolBus, //校车
   evaluation, //评教
   calendar, //校历
+}
+enum YJSToolItem {
+  jwSystem, //研究生系统
+  vpn, //vpn
+  library, //图书馆
+  serviceHall, //服务大厅
+  schoolBus, //校车
+  calendar, //校历
+}
+
+extension yjsItemName on YJSToolItem {
+  String name() {
+    var name = '';
+    switch (this.index) {
+      case 0:
+        name = '研究生系统';
+        break;
+      case 1:
+        name = 'VPN';
+        break;
+      case 2:
+        name = '图书馆';
+        break;
+      case 3:
+        name = '服务大厅';
+        break;
+      case 4:
+        name = '校车';
+        break;
+      case 5:
+        name = '校历';
+        break;
+      default:
+        throw UnimplementedError();
+    }
+    return name;
+  }
+
+  IconData icon() {
+    var icon;
+    switch (this.index) {
+      case 0:
+        icon = FontAwesomeIcons.battleNet;
+        break;
+      case 1:
+        icon = Icons.vpn_key;
+        break;
+      case 2:
+        icon = FontAwesomeIcons.book;
+        break;
+      case 3:
+        icon = Icons.contact_mail;
+        break;
+      case 4:
+        icon = FontAwesomeIcons.busAlt;
+        break;
+      case 5:
+        icon = Icons.description;
+        break;
+      default:
+        throw UnimplementedError();
+    }
+    return icon;
+  }
 }
 
 extension itemName on ToolItem {
@@ -136,106 +201,142 @@ class ToolPage extends StatelessWidget {
             ),
           ),
         ),
-        SliverPadding(
-          padding: const EdgeInsets.fromLTRB(10, 25, 10, 25),
-          sliver: SliverGrid(
-            //Grid
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3, //Grid按两列显示
-              mainAxisSpacing: 40.0,
-              crossAxisSpacing: 10.0,
-              childAspectRatio: 1.0,
-            ),
-            delegate: SliverChildBuilderDelegate(
-              (BuildContext context, int index) {
-                final item = ToolItem.values[index];
-                return TextButton(
-                  onPressed: () async {
-                    final user = getUserData();
-                    final settings = getSettingsData();
-                    switch (item) {
-                      case ToolItem.jwSystem:
-                        _handleJwSystem(context, user, settings);
-                        break;
-                      case ToolItem.sySystem:
-                        _handleSySystem(context, user, settings);
-                        break;
-                      case ToolItem.vpn:
-                        _handleVpn(context, user, settings);
-                        break;
-                      case ToolItem.library:
-                        _handleLibrary(context, user, settings);
-                        break;
-                      case ToolItem.serviceHall:
-                        _handleServiceHall(context, user, settings);
-                        break;
-                      case ToolItem.graduation:
-                        _handleGraduation(context, user, settings);
-                        break;
-                      case ToolItem.schoolBus:
-                        try {
-                          EasyLoading.show(status: '请稍等');
-                          final result = await FStarNet().getJustSchoolBus();
-                          checkResult(result);
-                          final url = result.data;
-                          if (url == null) {
-                            EasyLoading.showError('校车url为空');
-                            return;
-                          }
-                          EasyLoading.dismiss();
-                          pushPage(context, UrlImage(url: url, title: '校车'));
-                        } catch (e) {
-                          Log.logger.e(e.toString());
-                          EasyLoading.showError(e.toString());
-                        }
-                        break;
-                      case ToolItem.evaluation:
-                        _handleEvaluation(context, user, settings);
-                        break;
-                      case ToolItem.calendar:
-                        try {
-                          EasyLoading.show(status: '请稍等');
-                          final result =
-                              await FStarNet().getJustSchoolCalendar();
-                          checkResult(result);
-                          final url = result.data;
-                          if (url == null) {
-                            EasyLoading.showError('校历url为空');
-                            return;
-                          }
-                          EasyLoading.dismiss();
-                          pushPage(context, UrlImage(url: url, title: '校历'));
-                        } catch (e) {
-                          Log.logger.e(e.toString());
-                          EasyLoading.showError(e.toString());
-                        }
-                        break;
-                    }
-                  },
-                  child: Column(
-                    children: [
-                      Icon(
-                        item.icon(),
-                        color:
-                            isDarkMode(context) ? Colors.white : Colors.black,
-                      ),
-                      Text(
-                        item.name(),
-                        style: TextStyle(
-                            color: isDarkMode(context)
-                                ? Colors.white
-                                : Colors.black),
-                        textAlign: TextAlign.center,
-                      )
-                    ],
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+        Selector<SettingsData, IdentityType>(
+            builder: (BuildContext context, data, Widget child) {
+              return SliverPadding(
+                padding: const EdgeInsets.fromLTRB(10, 25, 10, 25),
+                sliver: SliverGrid(
+                  //Grid
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3, //Grid按两列显示
+                    mainAxisSpacing: 40.0,
+                    crossAxisSpacing: 10.0,
+                    childAspectRatio: 1.0,
                   ),
-                );
-              },
-              childCount: ToolItem.values.length,
-            ),
-          ),
-        ),
+                  delegate: SliverChildBuilderDelegate(
+                    (BuildContext context, int index) {
+                      switch (data) {
+                        case IdentityType.undergraduate:
+                          {
+                            final item = ToolItem.values[index];
+                            return TextButton(
+                              onPressed: () async {
+                                final user = getUserData();
+                                final settings = getSettingsData();
+                                switch (item) {
+                                  case ToolItem.jwSystem:
+                                    _handleJwSystem(context, user, settings);
+                                    break;
+                                  case ToolItem.sySystem:
+                                    _handleSySystem(context, user, settings);
+                                    break;
+                                  case ToolItem.vpn:
+                                    _handleVpn(context, user, settings);
+                                    break;
+                                  case ToolItem.library:
+                                    _handleLibrary(context, user, settings);
+                                    break;
+                                  case ToolItem.serviceHall:
+                                    _handleServiceHall(context, user, settings);
+                                    break;
+                                  case ToolItem.graduation:
+                                    _handleGraduation(context, user, settings);
+                                    break;
+                                  case ToolItem.schoolBus:
+                                    _handleSchoolBus(context);
+                                    break;
+                                  case ToolItem.evaluation:
+                                    _handleEvaluation(context, user, settings);
+                                    break;
+                                  case ToolItem.calendar:
+                                    _handleCalendar(context);
+                                    break;
+                                }
+                              },
+                              child: Column(
+                                children: [
+                                  Icon(
+                                    item.icon(),
+                                    color: isDarkMode(context)
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
+                                  Text(
+                                    item.name(),
+                                    style: TextStyle(
+                                        color: isDarkMode(context)
+                                            ? Colors.white
+                                            : Colors.black),
+                                    textAlign: TextAlign.center,
+                                  )
+                                ],
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                              ),
+                            );
+                          }
+                          break;
+                        case IdentityType.graduate:
+                          {
+                            final item = YJSToolItem.values[index];
+                            return TextButton(
+                              onPressed: () {
+                                final user = getUserData();
+                                final settings = getSettingsData();
+                                switch (item) {
+                                  case YJSToolItem.jwSystem:
+                                    _handleYjsSystem(context, user, settings);
+                                    break;
+                                  case YJSToolItem.vpn:
+                                    _handleVpn(context, user, settings);
+                                    break;
+                                  case YJSToolItem.library:
+                                    _handleLibrary(context, user, settings);
+                                    break;
+                                  case YJSToolItem.serviceHall:
+                                    _handleServiceHall(context, user, settings);
+                                    break;
+                                  case YJSToolItem.schoolBus:
+                                    _handleSchoolBus(context);
+                                    break;
+                                  case YJSToolItem.calendar:
+                                    _handleCalendar(context);
+                                    break;
+                                }
+                              },
+                              child: Column(
+                                children: [
+                                  Icon(
+                                    item.icon(),
+                                    color: isDarkMode(context)
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
+                                  Text(
+                                    item.name(),
+                                    style: TextStyle(
+                                        color: isDarkMode(context)
+                                            ? Colors.white
+                                            : Colors.black),
+                                    textAlign: TextAlign.center,
+                                  )
+                                ],
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                              ),
+                            );
+                          }
+                          break;
+                        default:
+                          throw UnimplementedError();
+                      }
+                    },
+                    childCount: _getItemCount(data),
+                  ),
+                ),
+              );
+            },
+            selector: (BuildContext context, settings) => settings.identityType)
       ],
     );
   }
@@ -415,5 +516,109 @@ class ToolPage extends StatelessWidget {
       return;
     }
     pushPage(context, PJ());
+  }
+
+  int _getItemCount(IdentityType identityType) {
+    switch (identityType) {
+      case IdentityType.undergraduate:
+        return ToolItem.values.length;
+        break;
+      case IdentityType.graduate:
+        return YJSToolItem.values.length;
+        break;
+      default:
+        throw UnimplementedError();
+    }
+  }
+
+  void _handleSchoolBus(BuildContext context) async {
+    try {
+      EasyLoading.show(status: '请稍等');
+      final result = await FStarNet().getJustSchoolBus();
+      checkResult(result);
+      final url = result.data;
+      if (url == null) {
+        EasyLoading.showError('校车url为空');
+        return;
+      }
+      EasyLoading.dismiss();
+      pushPage(context, UrlImage(url: url, title: '校车'));
+    } catch (e) {
+      Log.logger.e(e.toString());
+      EasyLoading.showError(e.toString());
+    }
+  }
+
+  void _handleCalendar(BuildContext context) async {
+    try {
+      EasyLoading.show(status: '请稍等');
+      final result = await FStarNet().getJustSchoolCalendar();
+      checkResult(result);
+      final url = result.data;
+      if (url == null) {
+        EasyLoading.showError('校历url为空');
+        return;
+      }
+      EasyLoading.dismiss();
+      pushPage(context, UrlImage(url: url, title: '校历'));
+    } catch (e) {
+      Log.logger.e(e.toString());
+      EasyLoading.showError(e.toString());
+    }
+  }
+
+  void _handleYjsSystem(
+      BuildContext context, UserData user, SettingsData settings) async {
+    try {
+      EasyLoading.show(status: '正在启动');
+      await Future.delayed(Duration(milliseconds: 200));
+      switch (settings.systemMode) {
+        case SystemMode.JUST:
+          if (user.jwAccount == null || user.jwPassword == null) {
+            EasyLoading.showToast('没有验证研究生系统账号');
+            return;
+          }
+          var response = await YJS.instance
+              .login(username: user.jwAccount, password: user.jwPassword);
+          var cookie = response.request.headers[HttpHeaders.cookieHeader];
+          await setCookie(cookie: cookie, url: response.request.uri.toString());
+          pushPage(
+            context,
+            FStarWebView(url: response.request.uri.toString()),
+          );
+          EasyLoading.dismiss();
+          break;
+        case SystemMode.VPN:
+          if (user.jwAccount == null || user.jwPassword == null) {
+            EasyLoading.showToast('没有验证研究生系统账号');
+            return;
+          }
+          if (user.vpnAccount == null || user.vpnPassword == null) {
+            EasyLoading.showToast('没有验证VPN账号');
+            return;
+          }
+          final response = await YJS_VPN.instance.login(
+              username: user.jwAccount,
+              password: user.jwPassword,
+              vpnUsername: user.vpnAccount,
+              vpnPassword: user.vpnPassword);
+          var cookie = response.request.headers[HttpHeaders.cookieHeader];
+          setCookie(cookie: cookie, url: response.request.uri.toString());
+          pushPage(context, FStarWebView(url: response.request.uri.toString()));
+          EasyLoading.dismiss();
+          break;
+        case SystemMode.VPN2:
+          // TODO: Handle this case.
+          EasyLoading.showToast('待实现');
+          break;
+        case SystemMode.CLOUD:
+          // TODO: Handle this case.
+          EasyLoading.showToast('待实现');
+          break;
+      }
+    } catch (e) {
+      EasyLoading.showError(e.toString());
+      Log.logger.e(e.toString());
+    }
   }
 }

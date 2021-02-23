@@ -550,10 +550,10 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "2c5bcfb2a660425354c5346456fa91a0acdba245"
+      resolved-ref: "302fd9a0a8d7aa3f4ad6459313353a7c056cc0ea"
       url: "https://github.com/DreamFever/just.git"
     source: git
-    version: "0.0.0"
+    version: "1.0.1"
   logger:
     dependency: "direct main"
     description:

@@ -8,9 +8,11 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:fstar/model/application.dart';
 import 'package:fstar/model/box_name.dart';
 import 'package:fstar/model/course_map.dart';
+import 'package:fstar/model/identity_enum.dart';
 import 'package:fstar/model/score_display_mode_enum.dart';
 import 'package:fstar/model/score_list.dart';
 import 'package:fstar/model/score_query_mode_enum.dart';
+import 'package:fstar/model/settings_data.dart';
 import 'package:fstar/model/system_mode_enum.dart';
 import 'package:fstar/page/score_page.dart';
 import 'package:fstar/page/sport_score_page.dart';
@@ -28,227 +30,238 @@ class QueryPage extends StatefulWidget {
   State createState() => _QueryPageState();
 }
 
-class _QueryPageState extends State<QueryPage> with WidgetsBindingObserver {
+class _QueryPageState extends State<QueryPage> {
   final _scoreList = getBoxData<ScoreList>(BoxName.scoreBox);
   final _scoreScrollController = ScrollController();
   final _scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [ChangeNotifierProvider.value(value: _scoreList)],
-      builder: (BuildContext context, Widget child) {
-        return Consumer<ScoreList>(
-            builder: (BuildContext context, score, Widget child) {
-          return Column(
-            children: [
-              Expanded(
-                child: Scrollbar(
-                  child: ListView.separated(
-                    itemCount: score.list.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      final item = score.list[index];
-                      return ListTile(
-                        leading: Text(
-                          '${index + 1}',
-                          style: TextStyle(fontSize: 14),
-                        ),
-                        onTap: () {
-                          showScoreDetails(context, item);
-                        },
-                        subtitle: Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 4),
-                              child: Text(
-                                item.name,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontSize: 18,
-                                    color: isDarkMode(context)
-                                        ? Colors.white
-                                        : Colors.black),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 4),
-                              child: Text(
-                                item.score,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontSize: 16,
-                                    color: isDarkMode(context)
-                                        ? Colors.white
-                                        : Colors.black),
-                              ),
-                            )
-                          ],
-                        ),
-                      );
-                    },
-                    separatorBuilder: (BuildContext context, int index) {
-                      return Divider();
-                    },
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        final settings = getSettingsData();
-                        final user = getUserData();
-                        if (user.jwAccount == null || user.jwPassword == null) {
-                          EasyLoading.showToast('没有验证教务系统账号');
-                          return;
-                        }
-                        switch (settings.scoreQueryMode) {
-                          case ScoreQueryMode.DEFAULT:
-                            _handleScoreQuery(context);
-                            break;
-                          case ScoreQueryMode.ALTERNATIVE:
-                            AwesomeDialog(
-                              context: context,
-                              dialogType: DialogType.INFO,
-                              body: Center(
-                                child: Padding(
-                                  padding: EdgeInsets.all(15),
-                                  child: Text.rich(
-                                    TextSpan(
-                                      text: "该入口仅在评教系统未开放的时候使用，"
-                                          "为不影响学校的评教秩序，"
-                                          "请在评教系统开放之后及时评教（工具页）并换回默认入口！",
-                                      children: [
-                                        TextSpan(
-                                          text: "注意：",
-                                          style: TextStyle(color: Colors.red),
-                                        ),
-                                        TextSpan(
-                                            text: "此入口计算的绩点可能不准确（有挂科的情况）"
-                                                "请以"),
-                                        TextSpan(
-                                          text: "默认入口",
-                                          style: TextStyle(color: Colors.red),
-                                        ),
-                                        TextSpan(text: "计算的绩点为准！")
-                                      ],
-                                    ),
-                                  ),
+    return Selector<SettingsData, IdentityType>(
+      selector: (BuildContext context, settings) => settings.identityType,
+      builder: (BuildContext context, data, Widget child) {
+        switch (data) {
+          case IdentityType.undergraduate:
+            return MultiProvider(
+              providers: [ChangeNotifierProvider.value(value: _scoreList)],
+              builder: (BuildContext context, Widget child) {
+                return Consumer<ScoreList>(
+                    builder: (BuildContext context, score, Widget child) {
+                  return Column(
+                    children: [
+                      Expanded(
+                        child: Scrollbar(
+                          child: ListView.separated(
+                            itemCount: score.list.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              final item = score.list[index];
+                              return ListTile(
+                                leading: Text(
+                                  '${index + 1}',
+                                  style: TextStyle(fontSize: 14),
                                 ),
-                              ),
-                              btnOk: TimerCountDownButton(
-                                onPressed: () {
-                                  _handleScoreQuery(context);
-                                  Navigator.pop(context);
+                                onTap: () {
+                                  showScoreDetails(context, item);
                                 },
-                              ),
-                            ).show();
-                            break;
-                        }
-                      },
-                      child: Text('学业成绩'),
-                    ),
-                    ElevatedButton(
-                      onPressed: () async {
-                        final settings = getSettingsData();
-                        final user = getUserData();
-                        if (user.tyAccount == null || user.tyPassword == null) {
-                          EasyLoading.showToast('没有验证体育账号');
-                          return;
-                        }
-                        switch (settings.systemMode) {
-                          case SystemMode.JUST:
-                            try {
-                              EasyLoading.show(status: '正在请求成绩');
-                              await Future.delayed(Duration(milliseconds: 375));
-                              final sportScoreRequester = SportScoreRequester();
-                              final sportScoreParser = SportScoreParser();
-                              final content =
-                                  await sportScoreRequester.action();
-                              sportScoreParser.action(content);
-                              EasyLoading.dismiss();
-                              pushPage(
-                                  context,
-                                  SportScore(
-                                      scoreData: sportScoreParser.score));
-                            } catch (e) {
-                              Log.logger.e(e.toString());
-                              EasyLoading.showError(e.toString());
-                            }
-                            break;
-                          case SystemMode.VPN:
-                            try {
-                              EasyLoading.show(status: '正在请求成绩');
-                              await Future.delayed(Duration(milliseconds: 375));
-                              final sportScoreRequester =
-                                  VPNSportScoreRequester();
-                              final sportScoreParser = SportScoreParser();
-                              final content =
-                                  await sportScoreRequester.action();
-                              sportScoreParser.action(content);
-                              EasyLoading.dismiss();
-                              pushPage(
-                                  context,
-                                  SportScore(
-                                      scoreData: sportScoreParser.score));
-                            } catch (e) {
-                              Log.logger.e(e.toString());
-                              EasyLoading.showError(e.toString());
-                            }
-                            break;
-                          case SystemMode.VPN2:
-                            EasyLoading.showToast('待实现');
-                            // TODO: Handle this case.
-                            break;
-                          case SystemMode.CLOUD:
-                            EasyLoading.showToast('待实现');
-                            // TODO: Handle this case.
-                            break;
-                        }
-                      },
-                      child: Text('体育成绩'),
-                    ),
-                  ],
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                ),
-              )
-            ],
-          );
-        });
+                                subtitle: Column(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 4),
+                                      child: Text(
+                                        item.name,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontSize: 18,
+                                            color: isDarkMode(context)
+                                                ? Colors.white
+                                                : Colors.black),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 4),
+                                      child: Text(
+                                        item.score,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            color: isDarkMode(context)
+                                                ? Colors.white
+                                                : Colors.black),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              );
+                            },
+                            separatorBuilder:
+                                (BuildContext context, int index) {
+                              return Divider();
+                            },
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                final settings = getSettingsData();
+                                final user = getUserData();
+                                if (user.jwAccount == null ||
+                                    user.jwPassword == null) {
+                                  EasyLoading.showToast('没有验证教务系统账号');
+                                  return;
+                                }
+                                switch (settings.scoreQueryMode) {
+                                  case ScoreQueryMode.DEFAULT:
+                                    _handleScoreQuery(context);
+                                    break;
+                                  case ScoreQueryMode.ALTERNATIVE:
+                                    AwesomeDialog(
+                                      context: context,
+                                      dialogType: DialogType.INFO,
+                                      body: Center(
+                                        child: Padding(
+                                          padding: EdgeInsets.all(15),
+                                          child: Text.rich(
+                                            TextSpan(
+                                              text: "该入口仅在评教系统未开放的时候使用，"
+                                                  "为不影响学校的评教秩序，"
+                                                  "请在评教系统开放之后及时评教（工具页）并换回默认入口！",
+                                              children: [
+                                                TextSpan(
+                                                  text: "注意：",
+                                                  style: TextStyle(
+                                                      color: Colors.red),
+                                                ),
+                                                TextSpan(
+                                                    text:
+                                                        "此入口计算的绩点可能不准确（有挂科的情况）"
+                                                        "请以"),
+                                                TextSpan(
+                                                  text: "默认入口",
+                                                  style: TextStyle(
+                                                      color: Colors.red),
+                                                ),
+                                                TextSpan(text: "计算的绩点为准！")
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      btnOk: TimerCountDownButton(
+                                        onPressed: () {
+                                          _handleScoreQuery(context);
+                                          Navigator.pop(context);
+                                        },
+                                      ),
+                                    ).show();
+                                    break;
+                                }
+                              },
+                              child: Text('学业成绩'),
+                            ),
+                            ElevatedButton(
+                              onPressed: () async {
+                                final settings = getSettingsData();
+                                final user = getUserData();
+                                if (user.tyAccount == null ||
+                                    user.tyPassword == null) {
+                                  EasyLoading.showToast('没有验证体育账号');
+                                  return;
+                                }
+                                switch (settings.systemMode) {
+                                  case SystemMode.JUST:
+                                    try {
+                                      EasyLoading.show(status: '正在请求成绩');
+                                      await Future.delayed(
+                                          Duration(milliseconds: 375));
+                                      final sportScoreRequester =
+                                          SportScoreRequester();
+                                      final sportScoreParser =
+                                          SportScoreParser();
+                                      final content =
+                                          await sportScoreRequester.action();
+                                      sportScoreParser.action(content);
+                                      EasyLoading.dismiss();
+                                      pushPage(
+                                          context,
+                                          SportScore(
+                                              scoreData:
+                                                  sportScoreParser.score));
+                                    } catch (e) {
+                                      Log.logger.e(e.toString());
+                                      EasyLoading.showError(e.toString());
+                                    }
+                                    break;
+                                  case SystemMode.VPN:
+                                    try {
+                                      EasyLoading.show(status: '正在请求成绩');
+                                      await Future.delayed(
+                                          Duration(milliseconds: 375));
+                                      final sportScoreRequester =
+                                          VPNSportScoreRequester();
+                                      final sportScoreParser =
+                                          SportScoreParser();
+                                      final content =
+                                          await sportScoreRequester.action();
+                                      sportScoreParser.action(content);
+                                      EasyLoading.dismiss();
+                                      pushPage(
+                                          context,
+                                          SportScore(
+                                              scoreData:
+                                                  sportScoreParser.score));
+                                    } catch (e) {
+                                      Log.logger.e(e.toString());
+                                      EasyLoading.showError(e.toString());
+                                    }
+                                    break;
+                                  case SystemMode.VPN2:
+                                    EasyLoading.showToast('待实现');
+                                    // TODO: Handle this case.
+                                    break;
+                                  case SystemMode.CLOUD:
+                                    EasyLoading.showToast('待实现');
+                                    // TODO: Handle this case.
+                                    break;
+                                }
+                              },
+                              child: Text('体育成绩'),
+                            ),
+                          ],
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        ),
+                      )
+                    ],
+                  );
+                });
+              },
+            );
+            break;
+          case IdentityType.graduate:
+            return Column(
+              children: [],
+            );
+            break;
+          default:
+            throw UnimplementedError();
+        }
       },
     );
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    switch (state) {
-      case AppLifecycleState.resumed:
-        Log.logger.i('resumed');
-        break;
-      case AppLifecycleState.inactive:
-        Log.logger.i('inactive');
-        break;
-      case AppLifecycleState.paused:
-        Log.logger.i('paused');
-        break;
-      case AppLifecycleState.detached:
-        Log.logger.i('detached');
-        break;
-    }
-  }
-
-  @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
   void dispose() {
     super.dispose();
-    WidgetsBinding.instance.removeObserver(this);
     _scrollController.dispose();
     _scoreScrollController.dispose();
   }
