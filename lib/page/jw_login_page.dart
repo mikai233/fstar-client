@@ -274,7 +274,7 @@ class _JwLoginState extends State<JwLogin> with WidgetsBindingObserver {
                 _settings.systemMode == SystemMode.VPN)
               Container(
                 height: 30,
-                margin: const EdgeInsets.symmetric(vertical: 8),
+                margin: const EdgeInsets.symmetric(vertical: 4),
                 child: Selector<SettingsData, IdentityType>(
                   selector: (_, data) => data.identityType,
                   builder: (BuildContext context, value, Widget child) {
@@ -309,7 +309,7 @@ class _JwLoginState extends State<JwLogin> with WidgetsBindingObserver {
                     if (_settings.systemMode == SystemMode.VPN)
                       Container(
                         height: 40,
-                        margin: const EdgeInsets.symmetric(vertical: 8),
+                        margin: const EdgeInsets.symmetric(vertical: 4),
                         child: TextFormField(
                           decoration: _buildDecoration(
                             labelText: 'VPN账号',
@@ -340,7 +340,7 @@ class _JwLoginState extends State<JwLogin> with WidgetsBindingObserver {
                     if (_settings.systemMode == SystemMode.VPN)
                       Container(
                         height: 40,
-                        margin: const EdgeInsets.symmetric(vertical: 8),
+                        margin: const EdgeInsets.symmetric(vertical: 4),
                         child: TextFormField(
                           decoration: _buildDecoration(
                             labelText: 'VPN密码',
@@ -378,7 +378,7 @@ class _JwLoginState extends State<JwLogin> with WidgetsBindingObserver {
                       ),
                     Container(
                       height: 40,
-                      margin: const EdgeInsets.symmetric(vertical: 8),
+                      margin: const EdgeInsets.symmetric(vertical: 4),
                       child: TextFormField(
                         decoration: _buildDecoration(
                           labelText: '账号',
@@ -407,7 +407,7 @@ class _JwLoginState extends State<JwLogin> with WidgetsBindingObserver {
                     ),
                     Container(
                       height: 40,
-                      margin: const EdgeInsets.symmetric(vertical: 8),
+                      margin: const EdgeInsets.symmetric(vertical: 4),
                       child: TextFormField(
                         decoration: _buildDecoration(
                           labelText: '密码',
@@ -446,7 +446,7 @@ class _JwLoginState extends State<JwLogin> with WidgetsBindingObserver {
                             case IdentityType.undergraduate:
                               return Padding(
                                 padding:
-                                    const EdgeInsets.symmetric(vertical: 8.0),
+                                    const EdgeInsets.symmetric(vertical: 4.0),
                                 child: Row(
                                   children: [
                                     _buildChangePasswordButton(),
@@ -459,7 +459,7 @@ class _JwLoginState extends State<JwLogin> with WidgetsBindingObserver {
                               break;
                             case IdentityType.graduate:
                               return Padding(
-                                padding: EdgeInsets.symmetric(vertical: 8.0),
+                                padding: EdgeInsets.symmetric(vertical: 4.0),
                               );
                               break;
                             // case IdentityType.teacher:
@@ -474,7 +474,7 @@ class _JwLoginState extends State<JwLogin> with WidgetsBindingObserver {
                       ),
                     Container(
                       height: 40.0,
-                      margin: EdgeInsets.symmetric(vertical: 8),
+                      margin: EdgeInsets.symmetric(vertical: 4),
                       child: SizedBox.expand(
                         child: ElevatedButton(
                           onPressed: _login,
@@ -496,7 +496,7 @@ class _JwLoginState extends State<JwLogin> with WidgetsBindingObserver {
             ),
             AnimatedContainer(
               height: _isKeyBoardTypeActive ? 0 : 80,
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
               duration: Duration(milliseconds: 300),
               curve: Curves.easeInOutQuad,
               child: Center(
