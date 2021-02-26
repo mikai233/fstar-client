@@ -10,7 +10,6 @@ import 'package:fstar/model/score_data.dart';
 import 'package:fstar/utils/utils.dart';
 import 'package:fstar/widget/manual_picker.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 typedef Predicate = bool Function(ScoreData scoreData);
 

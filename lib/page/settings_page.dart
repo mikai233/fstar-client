@@ -26,11 +26,9 @@ import 'package:fstar/utils/fstar_scroll_behavior.dart';
 import 'package:fstar/utils/logger.dart';
 import 'package:fstar/utils/utils.dart';
 import 'package:fstar/widget/my_switch.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:package_info/package_info.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toggle_switch/toggle_switch.dart';
@@ -946,34 +944,34 @@ class _SettingsPage extends State<SettingsPage> {
                 ],
               ),
             ),
-            btnOk: ElevatedButton(
-              // color: Theme.of(context).primaryColor,
-              child: Text(
-                '保存到相册',
-                // style: TextStyle(
-                //   color: Utils.getReverseForegroundColor(context),
-                // ),
-              ),
-              onPressed: () async {
-                var bytes = await rootBundle.load('images/pay.png');
-                if (await Permission.storage.isGranted ||
-                    await Permission.storage.request().isGranted) {
-                  final String result = await ImageGallerySaver.saveImage(
-                      bytes.buffer.asUint8List(),
-                      name: "pay");
-                  if (result.isNotEmpty) {
-                    EasyLoading.showToast('保存成功');
-                  } else {
-                    EasyLoading.showToast('保存失败');
-                  }
-                } else if (await Permission.storage.isDenied) {
-                  EasyLoading.showToast('保存图片需要读写外部存储器权限');
-                } else if (await Permission.storage.isPermanentlyDenied) {
-                  EasyLoading.showToast('请到设置中开启允许本软件读写外部存储器的权限');
-                }
-                Navigator.pop(context);
-              },
-            ),
+            // btnOk: ElevatedButton(
+            //   // color: Theme.of(context).primaryColor,
+            //   child: Text(
+            //     '保存到相册',
+            //     // style: TextStyle(
+            //     //   color: Utils.getReverseForegroundColor(context),
+            //     // ),
+            //   ),
+            //   onPressed: () async {
+            //     var bytes = await rootBundle.load('images/pay.png');
+            //     if (await Permission.storage.isGranted ||
+            //         await Permission.storage.request().isGranted) {
+            //       final String result = await ImageGallerySaver.saveImage(
+            //           bytes.buffer.asUint8List(),
+            //           name: "pay");
+            //       if (result.isNotEmpty) {
+            //         EasyLoading.showToast('保存成功');
+            //       } else {
+            //         EasyLoading.showToast('保存失败');
+            //       }
+            //     } else if (await Permission.storage.isDenied) {
+            //       EasyLoading.showToast('保存图片需要读写外部存储器权限');
+            //     } else if (await Permission.storage.isPermanentlyDenied) {
+            //       EasyLoading.showToast('请到设置中开启允许本软件读写外部存储器的权限');
+            //     }
+            //     Navigator.pop(context);
+            //   },
+            // ),
           ).show();
         },
       ),

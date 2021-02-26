@@ -90,7 +90,7 @@ class FStarApp extends StatelessWidget {
       builder: (BuildContext context, Widget child) => ScreenUtilInit(
         allowFontScaling: false,
         designSize: Size(1440, 2560),
-        child: MaterialApp(
+        builder: () => MaterialApp(
           debugShowCheckedModeBanner: false,
           // checkerboardOffscreenLayers: true,
           // checkerboardRasterCacheImages: true,
