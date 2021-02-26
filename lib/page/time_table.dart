@@ -33,8 +33,8 @@ class _TimeTableState extends State<TimeTable> {
                             final settings = context.read<SettingsData>();
                             final table = settings.timeTable;
                             table
-                              ..removeRange(0, 10)
-                              ..insertAll(0, [
+                              ..clear()
+                              ..addAll([
                                 '8:30 9:15',
                                 '9:20 10:05',
                                 '10:25 11:10',
@@ -46,6 +46,13 @@ class _TimeTableState extends State<TimeTable> {
                                 '18:30 19:15',
                                 '19:20 20:05'
                               ]);
+                            final times =
+                                settings.initSelectionNumber - table.length;
+                            if (times > 0) {
+                              for (int i = 0; i < times; ++i) {
+                                table.add('00:00 00:00');
+                              }
+                            }
                             settings
                               ..timeTable = table
                               ..save();
@@ -58,8 +65,8 @@ class _TimeTableState extends State<TimeTable> {
                             final settings = context.read<SettingsData>();
                             final table = settings.timeTable;
                             table
-                              ..removeRange(0, 11)
-                              ..insertAll(0, [
+                              ..clear()
+                              ..addAll([
                                 '8:00 8:45',
                                 '9:55 9:40',
                                 '10:00 10:45',
@@ -72,6 +79,13 @@ class _TimeTableState extends State<TimeTable> {
                                 '19:55 20:40',
                                 '20:50 21:35',
                               ]);
+                            final times =
+                                settings.initSelectionNumber - table.length;
+                            if (times > 0) {
+                              for (int i = 0; i < times; ++i) {
+                                table.add('00:00 00:00');
+                              }
+                            }
                             settings
                               ..timeTable = table
                               ..save();
