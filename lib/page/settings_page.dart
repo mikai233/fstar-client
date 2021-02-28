@@ -636,9 +636,12 @@ class _SettingsPage extends State<SettingsPage> {
                 }
               }
               final bytes = await croppedFile.readAsBytes();
-              File(nextPath).writeAsBytes(bytes).then((value) => settings
-                ..courseBackgroundPath = value.path
-                ..save());
+              File(nextPath)
+                  .writeAsBytes(bytes)
+                  .then((value) => settings
+                    ..courseBackgroundPath = value.path
+                    ..save())
+                  .catchError(print);
             }
           } catch (e) {
             EasyLoading.showError('背景设置失败');
@@ -700,9 +703,12 @@ class _SettingsPage extends State<SettingsPage> {
                 }
               }
               final bytes = await croppedFile.readAsBytes();
-              File(nextPath).writeAsBytes(bytes).then((value) => settings
-                ..scoreBackgroundPath = value.path
-                ..save());
+              File(nextPath)
+                  .writeAsBytes(bytes)
+                  .then((value) => settings
+                    ..scoreBackgroundPath = value.path
+                    ..save())
+                  .catchError(print);
             }
           } catch (e) {
             EasyLoading.showError('背景设置失败');
@@ -758,7 +764,7 @@ class _SettingsPage extends State<SettingsPage> {
                   (await getApplicationDocumentsDirectory()).path +
                       '/toolImage_${DateTime.now().millisecondsSinceEpoch}';
               final settings = context.read<SettingsData>();
-              final previousPath = settings.scoreBackgroundPath;
+              final previousPath = settings.toolBackgroundPath;
               if (previousPath != null) {
                 final previousFile = File(previousPath);
                 if (previousFile.existsSync()) {
@@ -766,9 +772,12 @@ class _SettingsPage extends State<SettingsPage> {
                 }
               }
               final bytes = await croppedFile.readAsBytes();
-              File(nextPath).writeAsBytes(bytes).then((value) => settings
-                ..toolBackgroundPath
-                ..save());
+              File(nextPath)
+                  .writeAsBytes(bytes)
+                  .then((value) => settings
+                    ..toolBackgroundPath = value.path
+                    ..save())
+                  .catchError(print);
             }
           } catch (e) {
             EasyLoading.showError('背景设置失败');

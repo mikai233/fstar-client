@@ -15,7 +15,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 2.0.2+32
+version: 2.0.3+33
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -60,9 +60,9 @@ dependencies:
     git: https://github.com/DreamFever/just.git
   toggle_switch: ^0.1.8
   package_info: ^2.0.0
-#  permission_handler: ^5.0.1+2
+  #  permission_handler: ^5.0.1+2
   image_gallery_saver: ^1.6.7
-#  animations: ^1.1.2
+  #  animations: ^1.1.2
   flutter_markdown: ^0.5.2
   excel: ^1.1.5
   shared_preferences: ^0.5.12+4
