@@ -49,7 +49,8 @@ class _FStarWebViewState extends State<FStarWebView> {
               focusNode: _focusNode,
               onSubmitted: (value) {
                 _focusNode.unfocus();
-                _appWebViewController.loadUrl(url: value);
+                _appWebViewController.loadUrl(
+                    urlRequest: URLRequest(url: Uri.parse(value)));
               },
               decoration: InputDecoration(
                 contentPadding:
@@ -72,7 +73,8 @@ class _FStarWebViewState extends State<FStarWebView> {
                       _focusNode.unfocus();
                     }
                     _appWebViewController.loadUrl(
-                        url: _textController.text.trim());
+                        urlRequest: URLRequest(
+                            url: Uri.parse(_textController.text.trim())));
                   },
                   child: Text('搜索'),
                 ),
@@ -108,7 +110,7 @@ class _FStarWebViewState extends State<FStarWebView> {
           ],
         ),
         body: InAppWebView(
-          initialUrl: widget.url,
+          initialUrlRequest: URLRequest(url: Uri.parse(widget.url)),
           onProgressChanged: (controller, updateValue) {
             setState(() {
               _value = updateValue / 100;
@@ -121,7 +123,7 @@ class _FStarWebViewState extends State<FStarWebView> {
             _appWebViewController = controller;
           },
           onLoadStart: (controller, url) {
-            _textController.text = url;
+            _textController.text = url.toString();
           },
           onLoadStop: (controller, url) {
             _appWebViewController.evaluateJavascript(source: r'''

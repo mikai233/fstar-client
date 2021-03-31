@@ -53,7 +53,8 @@ class _ImportWebViewState extends State<ImportWebView> {
               focusNode: _focusNode,
               onSubmitted: (value) {
                 _focusNode.unfocus();
-                _appWebViewController.loadUrl(url: value);
+                _appWebViewController.loadUrl(
+                    urlRequest: URLRequest(url: Uri.parse(value)));
               },
               decoration: InputDecoration(
                 hintText: '教务系统网址',
@@ -77,7 +78,8 @@ class _ImportWebViewState extends State<ImportWebView> {
                       _focusNode.unfocus();
                     }
                     _appWebViewController.loadUrl(
-                        url: _textController.text.trim());
+                        urlRequest: URLRequest(
+                            url: Uri.parse(_textController.text.trim())));
                   },
                   child: Text('搜索'),
                 ),
@@ -145,7 +147,8 @@ class _ImportWebViewState extends State<ImportWebView> {
           ],
         ),
         body: InAppWebView(
-          initialUrl: 'https://www.bing.com/',
+          initialUrlRequest:
+              URLRequest(url: Uri.parse('https://www.bing.com/')),
           onProgressChanged: (controller, updateValue) {
             setState(() {
               _value = updateValue / 100;
@@ -204,7 +207,9 @@ class _ImportWebViewState extends State<ImportWebView> {
             final urlFile = File(directory.path + '/url.js');
             if (urlFile.existsSync()) {
               final url = urlFile.readAsStringSync();
-              _appWebViewController.loadUrl(url: url);
+              _appWebViewController.loadUrl(
+                  urlRequest:
+                      URLRequest(url: Uri.parse(url)));
             }
           },
           onScrollChanged: (controller, x, y) {
@@ -214,7 +219,7 @@ class _ImportWebViewState extends State<ImportWebView> {
             }
           },
           onLoadStart: (controller, url) {
-            _textController.text = url;
+            _textController.text = url.toString();
           },
           onLoadStop: (controller, url) {
             _appWebViewController.evaluateJavascript(source: r'''

@@ -933,7 +933,7 @@ List<String> calculateGPA(List<ScoreData> scoreData, Predicate predicate) {
     semesters.putIfAbsent(score.semester, () => []);
     semesters[score.semester].add(score);
   }
-  List<String> result = List<String>();
+  List<String> result = [];
 //如果是最好成绩
   final settings = getSettingsData();
   if (settings.scoreDisplayMode == ScoreDisplayMode.MAX &&
@@ -1288,7 +1288,8 @@ Future<dynamic> setCookie({@required String cookie, @required String url}) {
   List<String> lc = cookie.split(' ');
   for (final i in lc) {
     final c = i.split("=");
-    waitList.add(cookieManager.setCookie(url: url, name: c[0], value: c[1]));
+    waitList.add(
+        cookieManager.setCookie(url: Uri.parse(url), name: c[0], value: c[1]));
   }
   return Future.wait(waitList);
 }

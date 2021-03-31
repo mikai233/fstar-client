@@ -385,8 +385,8 @@ class GraduateScoreParser implements DefaultScoreParser {
     final degree = tbody.first;
     final elective = tbody.last;
     final degreeTrs = degree.querySelectorAll('tr');
-    final degreeScore = List<List<String>>();
-    final electiveScore = List<List<String>>();
+    final degreeScore = [];
+    final electiveScore = [];
     final otherInfo = Map<String, String>();
     //remove header
     degreeTrs.removeAt(0);
@@ -414,4 +414,26 @@ class GraduateScoreParser implements DefaultScoreParser {
 
   @override
   final List<ScoreData> scoreList = null;
+}
+
+class SportClubParser extends Parser {
+  String remark = '';
+  List<String> item = [];
+
+  void action(String content) {
+    final trs = parse(content).querySelectorAll('table tr');
+    trs.removeAt(0);
+    remark = trs.removeLast().text;
+    trs.forEach((element) {
+      final regex =
+          RegExp('<td>1</td><td>(.*?)</td><td>(.*?)</td><td>(.*?)</td>');
+      if (regex.hasMatch(element.innerHtml)) {
+        var matchResult = regex.firstMatch(element.innerHtml);
+        var date = matchResult.group(1).replaceAll(' ', '');
+        var time = matchResult.group(2).trim();
+        var remark = matchResult.group(3).trim();
+        item.add('$date $time $remark');
+      }
+    });
+  }
 }

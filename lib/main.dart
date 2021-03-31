@@ -32,7 +32,6 @@ import 'package:fstar/page/privacy_policy_page.dart';
 import 'package:fstar/page/settings_page.dart';
 import 'package:fstar/page/time_table.dart';
 import 'package:fstar/route/routes.dart';
-import 'package:fstar/utils/logger.dart';
 import 'package:fstar/utils/utils.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -61,7 +60,7 @@ void main() async {
     _configEasyLoading();
   } catch (e) {
     //ignore
-    Log.logger.e(e.toString());
+    print(e);
   }
   runApp(FStarApp());
 }

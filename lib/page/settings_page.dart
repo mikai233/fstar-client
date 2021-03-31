@@ -1440,8 +1440,9 @@ class _SettingsPage extends State<SettingsPage> {
                 ),
               ),
               onTap: () {
-                context.read<SettingsData>().systemMode =
-                    SystemMode.values[index];
+                context.read<SettingsData>()
+                  ..systemMode = SystemMode.values[index]
+                  ..save();
                 configRequesterAndParser();
                 Navigator.pop(context);
               },
