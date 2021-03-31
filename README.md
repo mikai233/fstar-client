@@ -260,14 +260,14 @@ window.location = 'http://yjsinfo.just.edu.cn/pyxx/pygl/kbcx_xs.aspx';
 
 ```
 Doctor summary (to see all details, run flutter doctor -v):
-[✓] Flutter (Channel dev, 1.27.0-4.0.pre, on Microsoft Windows [Version 10.0.19042.804], locale zh-CN)
+[✓] Flutter (Channel dev, 2.1.0-12.1.pre, on Microsoft Windows [Version 10.0.19042.867], locale zh-CN)
 [✓] Android toolchain - develop for Android devices (Android SDK version 30.0.2)
 [✓] Chrome - develop for the web
 [✓] Visual Studio - develop for Windows (Visual Studio Enterprise 2019 16.8.2)
 [✓] Android Studio (version 4.1.0)
 [✓] IntelliJ IDEA Ultimate Edition (version 2020.3)
 [✓] VS Code (version 1.45.1)
-[✓] Connected device (3 available)
+[✓] Connected device (4 available)
 ```
 
 ## Flutter学习
