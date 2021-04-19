@@ -38,7 +38,8 @@ class CourseMap extends HiveObject with ChangeNotifier {
       _dataMap = generateEmptyCourseMap();
     }
     value.forEach((element) {
-      _dataMap[element.column].add(element);
+      _dataMap[element.column] = _dataMap[element.column].toList()
+        ..add(element);
     });
     notifyListeners();
   }

@@ -517,6 +517,7 @@ Future<T> showModalBottomCourseEditSheet<T>(BuildContext context,
                                       ..save();
                                   } catch (e) {
                                     EasyLoading.showError(e.toString());
+                                    Log.logger.e(e.toString());
                                   }
                                 } else {
                                   final editedCourse = courseData.copyWith(
