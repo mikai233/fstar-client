@@ -27,49 +27,49 @@ dependencies:
     sdk: flutter
   dio: ^3.0.10
   hive_flutter: ^1.0.0
-  hive: ^2.0.1
+  hive: ^2.0.4
   fluro: ^1.7.8
   flutter_easyloading: ^2.2.2
-  awesome_dialog: ^1.3.1
+  awesome_dialog: ^2.0.0
   html: ^0.14.0+4
   image_picker: ^0.6.7+22
   install_plugin:
     git: https://github.com/hui-z/flutter_install_plugin.git
   flutter_neumorphic:
     git: https://github.com/Idean/Flutter-Neumorphic.git
-  provider: ^4.3.3
+  provider: ^5.0.0
   flutter_staggered_animations:
     git:
       url: https://github.com/josh-burton/flutter_staggered_animations.git
       ref: findAncestorWidgetOfExactType
   flutter_displaymode: ^0.1.1
-  flutter_inappwebview: ^5.1.0+4
+  flutter_inappwebview: ^5.3.2
   device_info: ^2.0.0
-  logger: ^0.9.4
-  flutter_colorpicker: ^0.3.5
+  logger: ^1.0.0
+  flutter_colorpicker: ^0.4.0
   flutter_material_color_picker: ^1.0.5
-  tuple: ^1.0.3
-  image_cropper: ^1.3.1
+  tuple: ^2.0.0
+  image_cropper: ^1.4.0
   path_provider: ^2.0.1
-  url_launcher: ^6.0.0
-  font_awesome_flutter: ^8.11.0
-  pull_to_refresh: ^1.6.4
-  flutter_rounded_date_picker: ^1.0.5+1
-  flutter_screenutil: ^4.0.3+2
+  url_launcher: ^6.0.3
+  font_awesome_flutter: ^9.0.0
+  pull_to_refresh: ^1.6.5
+  flutter_rounded_date_picker: ^2.0.2
+  flutter_screenutil: ^5.0.0
   just:
     git: https://github.com/DreamFever/just.git
-  toggle_switch: ^0.1.8
+  toggle_switch: ^0.1.9
   package_info: ^2.0.0
   #  permission_handler: ^5.0.1+2
   image_gallery_saver: ^1.6.7
   #  animations: ^1.1.2
-  flutter_markdown: ^0.5.2
+  flutter_markdown: ^0.6.1
   excel:
     git:
       url: https://github.com/justkawal/excel.git
   shared_preferences: ^2.0.5
-  crypto: ^3.0.0
-  photo_view: ^0.10.3
+  crypto: ^3.0.1
+  photo_view: ^0.11.1
 
 
   # The following adds the Cupertino Icons font to your application.
