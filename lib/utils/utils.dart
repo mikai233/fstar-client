@@ -1412,7 +1412,6 @@ Future<void> showMessage(BuildContext context) async {
                 controller: controller,
                 itemBuilder: (BuildContext context, int index) {
                   return ListTile(
-                    leading: Text('${index + 1}'),
                     title: Text(messages[index]),
                   );
                 },

@@ -47,7 +47,7 @@ extension yjsItemName on YJSToolItem {
         name = '研究生系统';
         break;
       case 1:
-        name = 'VPN';
+        name = 'VPN(停用)';
         break;
       case 2:
         name = '图书馆';
@@ -106,7 +106,7 @@ extension itemName on ToolItem {
         name = '实验系统';
         break;
       case 2:
-        name = 'VPN';
+        name = 'VPN(停用)';
         break;
       case 3:
         name = '图书馆';

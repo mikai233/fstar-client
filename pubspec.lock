@@ -35,7 +35,7 @@ packages:
       name: async
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "2.5.0"
+    version: "2.6.1"
   awesome_dialog:
     dependency: "direct main"
     description:
@@ -531,7 +531,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "5274b58f4f340884ec4cb24d56b981274886d5cf"
+      resolved-ref: "316f84fae86b95f761eac4764c3457f944c2417e"
       url: "https://github.com/DreamFever/just.git"
     source: git
     version: "1.0.1"
