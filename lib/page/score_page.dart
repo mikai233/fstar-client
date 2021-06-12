@@ -122,15 +122,14 @@ class _ScorePageState extends State<ScorePage>
       ]);
     });
     excel.delete('Sheet1');
-    excel.encode().then((value) {
-      File(file)
-        ..createSync(recursive: true)
-        ..writeAsBytesSync(value);
-      EasyLoading.showSuccess('导出目录${dir.path}');
-    }).catchError((error) {
-      EasyLoading.showError('导出失败');
-      Log.logger.e(error.toString());
-    });
+    var bytes = excel.save();
+    File(file)
+      ..createSync(recursive: true)
+      ..writeAsBytes(bytes)
+          .whenComplete(() => EasyLoading.showSuccess('导出目录${dir.path}'))
+          .catchError((error) {
+        EasyLoading.showError('导出失败');
+      });
   }
 
   @override

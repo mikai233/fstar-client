@@ -1517,7 +1517,6 @@ Future<bool> showCheckVersion(BuildContext context) async {
                       controller: scrollController,
                       itemBuilder: (BuildContext context, int index) {
                         return ListTile(
-                          leading: Text('${index + 1}'),
                           title: Text(messages[index]),
                         );
                       },

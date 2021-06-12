@@ -186,14 +186,7 @@ Future<void> _setRefreshRate() async {
   if (platform == FPlatform.android) {
     var androidInfo = await DeviceInfoPlugin().androidInfo;
     if (androidInfo.brand == 'OnePlus') {
-      var supported = await FlutterDisplayMode.supported;
-      supported
-        ..sort((a, b) => a.height.toInt() - b.height.toInt())
-        ..sort((a, b) => a.refreshRate.toInt() - b.refreshRate.toInt());
-      var current = await FlutterDisplayMode.current;
-      if (current != supported.last) {
-        FlutterDisplayMode.setMode(supported.last);
-      }
+      await FlutterDisplayMode.setHighRefreshRate();
     }
   }
 }

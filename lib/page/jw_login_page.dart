@@ -288,6 +288,7 @@ class _JwLoginState extends State<JwLogin> with WidgetsBindingObserver {
                       labels: IdentityType.values.map((e) => e.name()).toList(),
                       activeBgColors: Colors.primaries
                           .take(IdentityType.values.length)
+                          .map((color) => [color])
                           .toList(),
                       onToggle: (index) {
                         context.read<SettingsData>()
@@ -295,6 +296,7 @@ class _JwLoginState extends State<JwLogin> with WidgetsBindingObserver {
                           ..save();
                         configRequesterAndParser();
                       },
+                      totalSwitches: IdentityType.values.length,
                     );
                   },
                 ),

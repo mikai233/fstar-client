@@ -225,15 +225,20 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.0.0"
+  equatable:
+    dependency: transitive
+    description:
+      name: equatable
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "2.0.2"
   excel:
     dependency: "direct main"
     description:
-      path: "."
-      ref: HEAD
-      resolved-ref: "52e0710f4ae347e24452d0f3d9d1a85150a1aa74"
-      url: "https://github.com/justkawal/excel.git"
-    source: git
-    version: "1.1.6"
+      name: excel
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "2.0.0-null-safety-3"
   fake_async:
     dependency: transitive
     description:
@@ -294,7 +299,7 @@ packages:
       name: flutter_displaymode
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.1.1"
+    version: "0.3.2"
   flutter_easyloading:
     dependency: "direct main"
     description:
@@ -331,11 +336,9 @@ packages:
   flutter_neumorphic:
     dependency: "direct main"
     description:
-      path: "."
-      ref: HEAD
-      resolved-ref: "54ed5895d831d39943dc53ef0fcdc275bb49cf16"
-      url: "https://github.com/Idean/Flutter-Neumorphic.git"
-    source: git
+      name: flutter_neumorphic
+      url: "https://pub.flutter-io.cn"
+    source: hosted
     version: "3.1.0"
   flutter_plugin_android_lifecycle:
     dependency: transitive
@@ -368,12 +371,10 @@ packages:
   flutter_staggered_animations:
     dependency: "direct main"
     description:
-      path: "."
-      ref: findAncestorWidgetOfExactType
-      resolved-ref: f9576bd6d1b07c67d642227a2e7d7398306213ff
-      url: "https://github.com/josh-burton/flutter_staggered_animations.git"
-    source: git
-    version: "0.1.2"
+      name: flutter_staggered_animations
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.0.0"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -532,7 +533,7 @@ packages:
       path: "."
       ref: HEAD
       resolved-ref: "316f84fae86b95f761eac4764c3457f944c2417e"
-      url: "https://github.com/DreamFever/just.git"
+      url: "https://github.com/mikai233/just.git"
     source: git
     version: "1.0.1"
   logger:
@@ -653,7 +654,7 @@ packages:
       name: petitparser
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "3.1.0"
+    version: "4.1.0"
   photo_view:
     dependency: "direct main"
     description:
@@ -716,7 +717,7 @@ packages:
       name: pull_to_refresh
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "1.6.5"
+    version: "2.0.0"
   quiver:
     dependency: transitive
     description:
@@ -875,7 +876,7 @@ packages:
       name: toggle_switch
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.1.9"
+    version: "1.0.0+1"
   tuple:
     dependency: "direct main"
     description:
@@ -973,7 +974,7 @@ packages:
       name: xml
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "4.5.1"
+    version: "5.1.2"
   yaml:
     dependency: transitive
     description:

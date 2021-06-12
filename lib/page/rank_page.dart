@@ -298,12 +298,15 @@ class _RankPageState extends State<RankPage>
                       });
                     });
                     excel.delete('Sheet1');
-                    excel.encode().then((onValue) {
-                      File(file)
-                        ..createSync(recursive: true)
-                        ..writeAsBytesSync(onValue);
-                      EasyLoading.showSuccess('导出目录${dir.path}');
-                    }).catchError((error) => EasyLoading.showError('导出失败'));
+                    var bytes = excel.save();
+                    File(file)
+                      ..createSync(recursive: true)
+                      ..writeAsBytes(bytes)
+                          .whenComplete(
+                              () => EasyLoading.showSuccess('导出目录${dir.path}'))
+                          .catchError((error) {
+                        EasyLoading.showError('导出失败');
+                      });
                     break;
                 }
               },

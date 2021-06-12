@@ -35,14 +35,10 @@ dependencies:
   image_picker: ^0.6.7+22
   install_plugin:
     git: https://github.com/hui-z/flutter_install_plugin.git
-  flutter_neumorphic:
-    git: https://github.com/Idean/Flutter-Neumorphic.git
+  flutter_neumorphic: ^3.1.0
   provider: ^5.0.0
-  flutter_staggered_animations:
-    git:
-      url: https://github.com/josh-burton/flutter_staggered_animations.git
-      ref: findAncestorWidgetOfExactType
-  flutter_displaymode: ^0.1.1
+  flutter_staggered_animations: ^1.0.0
+  flutter_displaymode: ^0.3.2
   flutter_inappwebview: ^5.3.2
   device_info: ^2.0.0
   logger: ^1.0.0
@@ -53,20 +49,18 @@ dependencies:
   path_provider: ^2.0.1
   url_launcher: ^6.0.3
   font_awesome_flutter: ^9.0.0
-  pull_to_refresh: ^1.6.5
+  pull_to_refresh: ^2.0.0
   flutter_rounded_date_picker: ^2.0.2
   flutter_screenutil: ^5.0.0
   just:
-    git: https://github.com/DreamFever/just.git
-  toggle_switch: ^0.1.9
+    git: https://github.com/mikai233/just.git
+  toggle_switch: ^1.0.0+1
   package_info: ^2.0.0
   #  permission_handler: ^5.0.1+2
   image_gallery_saver: ^1.6.7
   #  animations: ^1.1.2
   flutter_markdown: ^0.6.1
-  excel:
-    git:
-      url: https://github.com/justkawal/excel.git
+  excel: ^2.0.0-null-safety-3
   shared_preferences: ^2.0.5
   crypto: ^3.0.1
   photo_view: ^0.11.1

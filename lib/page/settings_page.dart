@@ -69,13 +69,16 @@ class _SettingsPage extends State<SettingsPage> {
                     inactiveBgColor: Colors.grey,
                     inactiveFgColor: Colors.white,
                     labels: FStarMode.values.map((e) => e.name()).toList(),
-                    activeBgColors:
-                        Colors.primaries.take(FStarMode.values.length).toList(),
+                    activeBgColors: Colors.primaries
+                        .take(FStarMode.values.length)
+                        .map((color) => [color])
+                        .toList(),
                     onToggle: (index) {
                       context.read<SettingsData>()
                         ..fStarMode = FStarMode.values[index]
                         ..save();
                     },
+                    totalSwitches: FStarMode.values.length,
                   ),
                 ),
               ),
@@ -286,12 +289,14 @@ class _SettingsPage extends State<SettingsPage> {
                   labels: ScoreQueryMode.values.map((e) => e.name()).toList(),
                   activeBgColors: Colors.primaries
                       .take(ScoreQueryMode.values.length)
+                      .map((color) => [color])
                       .toList(),
                   onToggle: (index) {
                     context.read<SettingsData>()
                       ..scoreQueryMode = ScoreQueryMode.values[index]
                       ..save();
                   },
+                  totalSwitches: ScoreQueryMode.values.length,
                 ),
               ),
             ),
@@ -318,6 +323,7 @@ class _SettingsPage extends State<SettingsPage> {
                         .toList(),
                     activeBgColors: Colors.primaries
                         .take(ScoreDisplayMode.values.length)
+                        .map((color) => [color])
                         .toList(),
                     onToggle: (index) {
                       context.read<SettingsData>()
@@ -325,6 +331,7 @@ class _SettingsPage extends State<SettingsPage> {
                         ..save();
                       // setState(() {});
                     },
+                    totalSwitches: ScoreDisplayMode.values.length,
                   ),
                 ),
               ),
@@ -543,13 +550,16 @@ class _SettingsPage extends State<SettingsPage> {
                 inactiveBgColor: Colors.grey,
                 inactiveFgColor: Colors.white,
                 labels: TableMode.values.map((e) => e.name()).toList(),
-                activeBgColors:
-                    Colors.primaries.take(TableMode.values.length).toList(),
+                activeBgColors: Colors.primaries
+                    .take(TableMode.values.length)
+                    .map((color) => [color])
+                    .toList(),
                 onToggle: (index) {
                   context.read<SettingsData>()
                     ..tableMode = TableMode.values[index]
                     ..save();
                 },
+                totalSwitches: TableMode.values.length,
               ),
             );
           },
