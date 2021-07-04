@@ -179,7 +179,7 @@ class _JwLoginState extends State<JwLogin> with WidgetsBindingObserver {
                           break;
                         //教务系统主页
                         case 'https://54a22a8aad6e5ffd02eb5278924100b5cas.v.just.edu.cn/jsxsd/framework/xsMain.jsp':
-                          await controller.evaluateJavascript(source: '''
+                          controller.evaluateJavascript(source: '''
                           $postFunction
                           httpPost("https://54a22a8aad6e5ffd02eb5278924100b5cas.v.just.edu.cn/jsxsd/xskb/xskb_list.do",{"xnxq01id":"${_settings.currentSemester}"});
                           ''');

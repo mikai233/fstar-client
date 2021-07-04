@@ -642,7 +642,7 @@ class ToolPage extends StatelessWidget {
                 break;
               //教务系统主页
               case 'https://54a22a8aad6e5ffd02eb5278924100b5cas.v.just.edu.cn/jsxsd/framework/xsMain.jsp':
-                await controller.evaluateJavascript(source: '''
+                controller.evaluateJavascript(source: '''
                           window.location.href="https://54a22a8aad6e5ffd02eb5278924100b5cas.v.just.edu.cn/jsxsd/xspj/xspj_find.do";
                           ''');
                 break;
