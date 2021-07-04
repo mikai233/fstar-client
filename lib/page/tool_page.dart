@@ -387,8 +387,34 @@ class ToolPage extends StatelessWidget {
           EasyLoading.dismiss();
           break;
         case SystemMode.VPN2:
-          // TODO: Handle this case.
-          EasyLoading.showToast('待实现');
+          if (user.serviceAccount == null || user.servicePassword == null) {
+            EasyLoading.showToast('没有验证服务大厅账号');
+            return;
+          }
+          final webview = FStarWebView(
+            url: 'https://vpn2.just.edu.cn',
+            onLoadComplete: (controller, uri) async {
+              Log.logger.i(uri.toString());
+              switch (uri.toString()) {
+                //服务大厅登录页
+                case 'https://cas.v.just.edu.cn/cas/login?service=http%3A%2F%2Fmy.just.edu.cn%2F':
+                  controller.evaluateJavascript(source: '''
+                      document.querySelector("#username").value="${user.serviceAccount}";
+                      document.querySelector("#password").value="${user.servicePassword}";
+                      document.querySelector("#passbutton").click()
+                      ''');
+                  break;
+                //服务大厅主页
+                case 'https://ids.v.just.edu.cn/_s2/students_sy/main.psp':
+                  controller.evaluateJavascript(source: '''
+                          window.location.href="https://54a22a8aad6e5ffd02eb5278924100b5ids.v.just.edu.cn/sso.jsp";
+                          ''');
+                  break;
+              }
+            },
+          );
+          pushPage(context, webview);
+          EasyLoading.dismiss();
           break;
         case SystemMode.CLOUD:
           // TODO: Handle this case.
@@ -403,16 +429,16 @@ class ToolPage extends StatelessWidget {
 
   void _handleSySystem(
       BuildContext context, UserData user, SettingsData settings) async {
-    if (user.syAccount == null || user.syPassword == null) {
-      EasyLoading.showToast('没有验证实验系统账号');
-      return;
-    }
     try {
       EasyLoading.show(status: '正在启动');
       await Future.delayed(Duration(milliseconds: 200));
       final user = getUserData();
       switch (settings.systemMode) {
         case SystemMode.JUST:
+          if (user.syAccount == null || user.syPassword == null) {
+            EasyLoading.showToast('没有验证实验系统账号');
+            return;
+          }
           final cookie = await JUST.instance
               .getSyCookie(username: user.syAccount, password: user.syPassword);
           setCookie(
@@ -440,8 +466,45 @@ class ToolPage extends StatelessWidget {
           EasyLoading.dismiss();
           break;
         case SystemMode.VPN2:
-          // TODO: Handle this case.
-          EasyLoading.showToast('待实现');
+          if (user.serviceAccount == null || user.servicePassword == null) {
+            EasyLoading.showToast('请先验证服务大厅账号');
+            return;
+          }
+          if (user.syAccount == null || user.syPassword == null) {
+            EasyLoading.showToast('没有验证实验账号');
+            return;
+          }
+          final webview = FStarWebView(
+            url: 'https://vpn2.just.edu.cn',
+            onLoadComplete: (controller, uri) async {
+              Log.logger.i(uri.toString());
+              switch (uri.toString()) {
+                //服务大厅登录页
+                case 'https://cas.v.just.edu.cn/cas/login?service=http%3A%2F%2Fmy.just.edu.cn%2F':
+                  controller.evaluateJavascript(source: '''
+                      document.querySelector("#username").value="${user.serviceAccount}";
+                      document.querySelector("#password").value="${user.servicePassword}";
+                      document.querySelector("#passbutton").click()
+                      ''');
+                  break;
+                //服务大厅主页
+                case 'https://ids.v.just.edu.cn/_s2/students_sy/main.psp':
+                  controller.evaluateJavascript(source: '''
+                          window.location.href="https://sjjx.v.just.edu.cn/sy/";
+                          ''');
+                  break;
+                case 'https://sjjx.v.just.edu.cn/sy/':
+                  controller.evaluateJavascript(source: '''
+                      document.querySelector("#Login1_UserName").value="${user.syAccount}";
+                      document.querySelector("#Login1_PassWord").value="${user.syPassword}";
+                      document.querySelector("#Login1_ImageButton1").click()
+                  ''');
+                  break;
+              }
+            },
+          );
+          pushPage(context, webview);
+          EasyLoading.dismiss();
           break;
         case SystemMode.CLOUD:
           // TODO: Handle this case.
@@ -497,11 +560,44 @@ class ToolPage extends StatelessWidget {
 
   void _handleServiceHall(
       BuildContext context, UserData user, SettingsData settings) {
-    pushPage(
-        context,
-        FStarWebView(
-          url: 'http://vpn2.just.edu.cn/',
-        ));
+    switch (settings.systemMode) {
+      case SystemMode.JUST:
+      case SystemMode.VPN:
+      case SystemMode.CLOUD:
+        pushPage(
+            context,
+            FStarWebView(
+              url: 'http://vpn2.just.edu.cn/',
+            ));
+        break;
+      case SystemMode.VPN2:
+        if (user.serviceAccount == null || user.servicePassword == null) {
+          pushPage(
+              context,
+              FStarWebView(
+                url: 'http://vpn2.just.edu.cn/',
+              ));
+        } else {
+          final webview = FStarWebView(
+            url: 'https://vpn2.just.edu.cn',
+            onLoadComplete: (controller, uri) async {
+              Log.logger.i(uri.toString());
+              switch (uri.toString()) {
+                //服务大厅登录页
+                case 'https://cas.v.just.edu.cn/cas/login?service=http%3A%2F%2Fmy.just.edu.cn%2F':
+                  controller.evaluateJavascript(source: '''
+                      document.querySelector("#username").value="${user.serviceAccount}";
+                      document.querySelector("#password").value="${user.servicePassword}";
+                      document.querySelector("#passbutton").click()
+                      ''');
+                  break;
+              }
+            },
+          );
+          pushPage(context, webview);
+        }
+        break;
+    }
   }
 
   void _handleGraduation(
@@ -511,11 +607,53 @@ class ToolPage extends StatelessWidget {
 
   void _handleEvaluation(
       BuildContext context, UserData user, SettingsData settings) {
-    if (user.jwAccount == null || user.jwPassword == null) {
-      EasyLoading.showToast('没有验证教务系统账号');
-      return;
+    switch (settings.systemMode) {
+      case SystemMode.JUST:
+      case SystemMode.VPN:
+        if (user.jwAccount == null || user.jwPassword == null) {
+          EasyLoading.showToast('没有验证教务系统账号');
+          return;
+        }
+        pushPage(context, PJ());
+        break;
+      case SystemMode.VPN2:
+        if (user.serviceAccount == null || user.servicePassword == null) {
+          EasyLoading.showToast('没有验证服务大厅账号');
+          return;
+        }
+        final webview = FStarWebView(
+          url: 'https://vpn2.just.edu.cn',
+          onLoadComplete: (controller, uri) async {
+            Log.logger.i(uri.toString());
+            switch (uri.toString()) {
+              //服务大厅登录页
+              case 'https://cas.v.just.edu.cn/cas/login?service=http%3A%2F%2Fmy.just.edu.cn%2F':
+                controller.evaluateJavascript(source: '''
+                      document.querySelector("#username").value="${user.serviceAccount}";
+                      document.querySelector("#password").value="${user.servicePassword}";
+                      document.querySelector("#passbutton").click()
+                      ''');
+                break;
+              //服务大厅主页
+              case 'https://ids.v.just.edu.cn/_s2/students_sy/main.psp':
+                controller.evaluateJavascript(source: '''
+                          window.location.href="https://54a22a8aad6e5ffd02eb5278924100b5ids.v.just.edu.cn/sso.jsp";
+                          ''');
+                break;
+              //教务系统主页
+              case 'https://54a22a8aad6e5ffd02eb5278924100b5cas.v.just.edu.cn/jsxsd/framework/xsMain.jsp':
+                await controller.evaluateJavascript(source: '''
+                          window.location.href="https://54a22a8aad6e5ffd02eb5278924100b5cas.v.just.edu.cn/jsxsd/xspj/xspj_find.do";
+                          ''');
+                break;
+            }
+          },
+        );
+        pushPage(context, webview);
+        break;
+      case SystemMode.CLOUD:
+        EasyLoading.showToast('未实现');
     }
-    pushPage(context, PJ());
   }
 
   int _getItemCount(IdentityType identityType) {

@@ -98,6 +98,8 @@ class UserData extends HiveObject with ChangeNotifier {
     _userNumber = null;
     _jwAccount = null;
     _jwPassword = null;
+    _serviceAccount = null;
+    _servicePassword = null;
     _tyAccount = null;
     _tyPassword = null;
     _syAccount = null;

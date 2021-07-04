@@ -5,10 +5,14 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:fstar/utils/utils.dart';
 
+typedef OnComplete = void Function(
+    InAppWebViewController inAppWebViewController, Uri uri);
+
 class FStarWebView extends StatefulWidget {
   final String url;
+  final OnComplete onLoadComplete;
 
-  const FStarWebView({Key key, @required this.url})
+  const FStarWebView({Key key, @required this.url, this.onLoadComplete})
       : assert(url != null),
         super(key: key);
 
@@ -129,6 +133,8 @@ class _FStarWebViewState extends State<FStarWebView> {
             _appWebViewController.evaluateJavascript(source: r'''
             window.showModalDialog=window.open;
             ''');
+            //onLoadComplete为null也没关系
+            widget.onLoadComplete(controller, url);
           },
           onReceivedServerTrustAuthRequest: (controller, challenge) async {
             return ServerTrustAuthResponse(

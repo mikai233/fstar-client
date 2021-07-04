@@ -1070,6 +1070,7 @@ void configRequesterAndParser() {
             {
               switch (settings.systemMode) {
                 case SystemMode.JUST:
+                case SystemMode.VPN2:
                   {
                     Application.courseRequester = DefaultCourseRequester();
                     Application.courseParser = DefaultCourseParser();
@@ -1102,9 +1103,6 @@ void configRequesterAndParser() {
                         break;
                     }
                   }
-                  break;
-                case SystemMode.VPN2:
-                  // TODO: Handle this case.
                   break;
                 case SystemMode.CLOUD:
                   // TODO: Handle this case.
@@ -1652,3 +1650,21 @@ Future<File> downloadAndroid(String url, BuildContext context) async {
   ).show();
   return file;
 }
+
+String postFunction = '''
+            function httpPost (URL, PARAMS) {
+                let temp = document.createElement("form");
+                temp.action = URL;
+                temp.method = "post";
+                temp.style.display = "none";
+ 
+                for (let x in PARAMS) {
+                    let opt = document.createElement("textarea");
+                    opt.name = x;
+                    opt.value = PARAMS[x];
+                    temp.appendChild(opt);
+                }
+                document.body.appendChild(temp);
+                temp.submit();
+        }
+''';

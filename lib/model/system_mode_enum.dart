@@ -26,7 +26,7 @@ extension modeName on SystemMode {
         modeName = 'VPN模式(已停用)';
         break;
       case 2:
-        modeName = 'VPN2模式(未实现)';
+        modeName = 'VPN2模式';
         break;
       case 3:
         modeName = '云模式(未实现)';

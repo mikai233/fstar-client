@@ -10,6 +10,8 @@ import 'package:fstar/utils/utils.dart';
 import 'package:just/just.dart';
 import 'package:provider/provider.dart';
 
+import 'fstar_webview.dart';
+
 enum LoginType {
   experiment,
   sport,
@@ -176,8 +178,50 @@ class _OtherLoginState extends State<OtherLogin> with WidgetsBindingObserver {
         }
         break;
       case SystemMode.VPN2:
-        // TODO: Handle this case.
-        EasyLoading.showToast('待实现');
+        final user = getUserData();
+        if (user.serviceAccount == null || user.servicePassword == null) {
+          EasyLoading.showToast('请先验证服务大厅账号');
+          return;
+        }
+        final webview = FStarWebView(
+          url: 'https://vpn2.just.edu.cn',
+          onLoadComplete: (controller, uri) async {
+            Log.logger.i(uri.toString());
+            switch (uri.toString()) {
+              //服务大厅登录页
+              case 'https://cas.v.just.edu.cn/cas/login?service=http%3A%2F%2Fmy.just.edu.cn%2F':
+                controller.evaluateJavascript(source: '''
+                      document.querySelector("#username").value="${user.serviceAccount}";
+                      document.querySelector("#password").value="${user.servicePassword}";
+                      document.querySelector("#passbutton").click()
+                      ''');
+                break;
+              //服务大厅主页
+              case 'https://ids.v.just.edu.cn/_s2/students_sy/main.psp':
+                controller.evaluateJavascript(source: '''
+                          window.location.href="https://sjjx.v.just.edu.cn/sy/";
+                          ''');
+                break;
+              case 'https://sjjx.v.just.edu.cn/sy/':
+                controller.evaluateJavascript(source: '''
+                      document.querySelector("#Login1_UserName").value="${_usernameController.text}";
+                      document.querySelector("#Login1_PassWord").value="${_passwordController.text}";
+                      document.querySelector("#Login1_ImageButton1").click()
+                  ''');
+                break;
+            }
+            if (uri.toString().contains(
+                'https://sjjx.v.just.edu.cn/sy/student/xsDefault.aspx')) {
+              user
+                ..syAccount = _usernameController.text
+                ..syPassword = _passwordController.text;
+              Navigator.pop(context);
+              Navigator.pop(context);
+            }
+          },
+        );
+        pushPage(context, webview);
+        EasyLoading.dismiss();
         break;
       case SystemMode.CLOUD:
         // TODO: Handle this case.

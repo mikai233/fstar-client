@@ -8,6 +8,7 @@ import 'package:fstar/model/course_map.dart';
 import 'package:fstar/model/date_today_data.dart';
 import 'package:fstar/model/fstar_mode_enum.dart';
 import 'package:fstar/model/settings_data.dart';
+import 'package:fstar/model/system_mode_enum.dart';
 import 'package:fstar/model/time_array_data.dart';
 import 'package:fstar/model/week_index_data.dart';
 import 'package:fstar/page/course_table.dart';
@@ -17,6 +18,8 @@ import 'package:fstar/widget/week_header.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:tuple/tuple.dart';
+
+import 'fstar_webview.dart';
 
 class CoursePage extends StatefulWidget {
   @override
@@ -232,6 +235,69 @@ class _CoursePageState extends State<CoursePage>
       return;
     }
     final user = getUserData();
+    //VPN2开启webview
+    if (settings.systemMode == SystemMode.VPN2) {
+      if (user.serviceAccount == null || user.servicePassword == null) {
+        EasyLoading.showToast('没有验证服务大厅账号');
+        controller.refreshFailed();
+        return;
+      }
+      final webview = FStarWebView(
+        url: 'https://vpn2.just.edu.cn',
+        onLoadComplete: (controller, uri) async {
+          Log.logger.i(uri.toString());
+          switch (uri.toString()) {
+            //服务大厅登录页
+            case 'https://cas.v.just.edu.cn/cas/login?service=http%3A%2F%2Fmy.just.edu.cn%2F':
+              controller.evaluateJavascript(source: '''
+                      document.querySelector("#username").value="${user.serviceAccount}";
+                      document.querySelector("#password").value="${user.servicePassword}";
+                      document.querySelector("#passbutton").click()
+                      ''');
+              break;
+            //服务大厅主页
+            case 'https://ids.v.just.edu.cn/_s2/students_sy/main.psp':
+              controller.evaluateJavascript(source: '''
+                          window.location.href="https://54a22a8aad6e5ffd02eb5278924100b5ids.v.just.edu.cn/sso.jsp";
+                          ''');
+              break;
+            //教务系统主页
+            case 'https://54a22a8aad6e5ffd02eb5278924100b5cas.v.just.edu.cn/jsxsd/framework/xsMain.jsp':
+              controller.evaluateJavascript(source: '''
+                          $postFunction
+                          httpPost("https://54a22a8aad6e5ffd02eb5278924100b5cas.v.just.edu.cn/jsxsd/xskb/xskb_list.do",{"xnxq01id":"${settings.currentSemester}"})
+                          ''');
+              break;
+            //课表页
+            case 'https://54a22a8aad6e5ffd02eb5278924100b5cas.v.just.edu.cn/jsxsd/xskb/xskb_list.do':
+              try {
+                Application.courseParser.action(await controller.getHtml());
+                context.read<CourseMap>()
+                  ..clearCourse()
+                  ..addCourseByList(Application.courseParser.courseList)
+                  ..remark = Application.courseParser.remark
+                  ..save();
+                user
+                  ..username = Application.courseParser.studentName
+                  ..save();
+                context.read<SettingsData>()
+                  ..semesterList = Application.courseParser.semesters
+                  ..save();
+                await Future.delayed(Duration(milliseconds: 200));
+                EasyLoading.showToast('课表获取成功');
+                Navigator.pushNamedAndRemoveUntil(
+                    context, '/', (route) => route == null);
+              } catch (e) {
+                EasyLoading.showError(e.toString());
+              }
+              break;
+          }
+        },
+      );
+      pushPage(context, webview);
+      controller.refreshCompleted();
+      return;
+    }
     if (user.jwAccount == null || user.jwPassword == null) {
       EasyLoading.showToast('没有验证教务系统账号');
       controller.refreshFailed();

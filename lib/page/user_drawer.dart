@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:fstar/model/application.dart';
@@ -106,9 +107,6 @@ class UserDrawer extends StatelessWidget {
                   EasyLoadingIndicatorType.squareCircle;
               EasyLoading.show();
               _clearData(context);
-              // if (Global.mode == Mode.VPN2) {
-              //   VPN2.instance.vpnLogout();
-              // }
               Future.delayed(Duration(seconds: 1), () {
                 EasyLoading.dismiss();
               });
@@ -145,6 +143,7 @@ class UserDrawer extends StatelessWidget {
   }
 
   void _clearData(BuildContext context) {
+    CookieManager.instance().deleteAllCookies();
     context.read<UserData>()
       ..clear() //清除用户数据
       ..save();
