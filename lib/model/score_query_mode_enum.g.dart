@@ -18,7 +18,7 @@ class ScoreQueryModeAdapter extends TypeAdapter<ScoreQueryMode> {
       case 1:
         return ScoreQueryMode.ALTERNATIVE;
       default:
-        return null;
+        return ScoreQueryMode.DEFAULT;
     }
   }
 

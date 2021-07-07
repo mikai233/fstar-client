@@ -18,7 +18,7 @@ class ScoreDisplayModeAdapter extends TypeAdapter<ScoreDisplayMode> {
       case 1:
         return ScoreDisplayMode.MAX;
       default:
-        return null;
+        return ScoreDisplayMode.ALL;
     }
   }
 

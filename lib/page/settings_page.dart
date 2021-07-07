@@ -345,6 +345,11 @@ class _SettingsPage extends State<SettingsPage> {
               onTap: _onSystemModeTap,
             ),
           ),
+          // ListTile(
+          //   title: Text('VPN2 URL跳转设置'),
+          //   onTap: _showUrlSettingDialog,
+          //   trailing: Icon(Icons.chevron_right),
+          // ),
           Selector<SettingsData, bool>(
             selector: (_, settingsData) => settingsData.saveScoreCloud,
             builder: (_, data, __) => MySwitch(
@@ -1453,6 +1458,9 @@ class _SettingsPage extends State<SettingsPage> {
                 context.read<SettingsData>()
                   ..systemMode = SystemMode.values[index]
                   ..save();
+                // if (SystemMode.values[index] == SystemMode.VPN2) {
+                //   EasyLoading.showInfo('如果登录时浏览器没有正确跳转，请修改设置中的跳转url');
+                // }
                 configRequesterAndParser();
                 Navigator.pop(context);
               },
@@ -1511,5 +1519,101 @@ class _SettingsPage extends State<SettingsPage> {
         child: Text('确定'),
       ),
     ).show();
+  }
+
+  void _showUrlSettingDialog() {
+    final settings = getSettingsData();
+    final serviceHallLoginUrlController = TextEditingController.fromValue(
+        TextEditingValue(text: settings.serviceHallLoginUrl));
+    final serviceHomeUrlController = TextEditingController.fromValue(
+        TextEditingValue(text: settings.serviceHomeUrl));
+    final jwHomeUrlController = TextEditingController.fromValue(
+        TextEditingValue(text: settings.jwHomeUrl));
+    final jwScoreUrlController = TextEditingController.fromValue(
+        TextEditingValue(text: settings.jwScoreUrl));
+    final jwScore2UrlController = TextEditingController.fromValue(
+        TextEditingValue(text: settings.jwScore2Url));
+    final jwCourseUrlController = TextEditingController.fromValue(
+        TextEditingValue(text: settings.jwCourseUrl));
+    final jwPjUrlController = TextEditingController.fromValue(
+        TextEditingValue(text: settings.jwPjUrl));
+    final syLoginUrlController = TextEditingController.fromValue(
+        TextEditingValue(text: settings.syLoginUrl));
+    final syHomeUrlController = TextEditingController.fromValue(
+        TextEditingValue(text: settings.syHomeUrl));
+    final jwClickUrlController = TextEditingController.fromValue(
+        TextEditingValue(text: settings.jwClickUrl));
+    final syClickUrlController = TextEditingController.fromValue(
+        TextEditingValue(text: settings.syClickUrl));
+    AwesomeDialog(
+      context: context,
+      dialogType: DialogType.NO_HEADER,
+      body: Column(
+        children: [
+          _buildInput('信息门户登录', serviceHallLoginUrlController),
+          _buildInput('信息门户主页', serviceHomeUrlController),
+          _buildInput('教务系统主页', jwHomeUrlController),
+          _buildInput('成绩页', jwScoreUrlController),
+          _buildInput('成绩替代页', jwScore2UrlController),
+          _buildInput('课表页', jwCourseUrlController),
+          _buildInput('评教页', jwPjUrlController),
+          _buildInput('实验系统登录', syClickUrlController),
+          _buildInput('实验系统登录页', syLoginUrlController),
+          _buildInput('实验系统主页', syHomeUrlController),
+          _buildInput('教务系统登录', jwClickUrlController),
+          _buildInput('教务系统登录', jwClickUrlController),
+        ],
+      ),
+      btnOk: ElevatedButton(
+        child: Text('确定'),
+        onPressed: () {
+          getSettingsData()
+            ..serviceHallLoginUrl = serviceHallLoginUrlController.text.trim()
+            ..serviceHomeUrl = serviceHomeUrlController.text.trim()
+            ..jwHomeUrl = jwHomeUrlController.text.trim()
+            ..jwScoreUrl = jwScoreUrlController.text.trim()
+            ..jwScore2Url = jwScore2UrlController.text.trim()
+            ..jwCourseUrl = jwCourseUrlController.text.trim()
+            ..jwPjUrl = jwPjUrlController.text.trim()
+            ..syLoginUrl = syLoginUrlController.text.trim()
+            ..syHomeUrl = syHomeUrlController.text.trim()
+            ..jwClickUrl = jwClickUrlController.text.trim()
+            ..syClickUrl = syClickUrlController.text.trim()
+            ..save();
+          Navigator.pop(context);
+        },
+      ),
+    ).show();
+  }
+
+  _buildInput(String label, TextEditingController controller) {
+    return Container(
+      height: 40,
+      margin: const EdgeInsets.all(8.0),
+      child: TextField(
+        controller: controller,
+        decoration: InputDecoration(
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          filled: true,
+          fillColor: isDarkMode(context)
+              ? Theme.of(context).backgroundColor
+              : Color.fromRGBO(240, 240, 240, 1),
+          hintText: 'url',
+          labelText: label,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(20),
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(20),
+            borderSide: BorderSide(color: Theme.of(context).primaryColor),
+          ),
+          errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(20),
+              borderSide: BorderSide.none),
+        ),
+      ),
+    );
   }
 }

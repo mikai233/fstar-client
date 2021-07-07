@@ -20,7 +20,7 @@ class TableModeAdapter extends TypeAdapter<TableMode> {
       case 2:
         return TableMode.C;
       default:
-        return null;
+        return TableMode.A;
     }
   }
 

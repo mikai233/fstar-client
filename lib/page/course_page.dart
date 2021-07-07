@@ -238,7 +238,7 @@ class _CoursePageState extends State<CoursePage>
     //VPN2开启webview
     if (settings.systemMode == SystemMode.VPN2) {
       if (user.serviceAccount == null || user.servicePassword == null) {
-        EasyLoading.showToast('没有验证服务大厅账号');
+        EasyLoading.showToast('没有验证信息门户账号');
         controller.refreshFailed();
         return;
       }
@@ -246,51 +246,50 @@ class _CoursePageState extends State<CoursePage>
         url: 'https://vpn2.just.edu.cn',
         onLoadComplete: (controller, uri) async {
           Log.logger.i(uri.toString());
-          switch (uri.toString()) {
-            //服务大厅登录页
-            case 'https://cas.v.just.edu.cn/cas/login?service=http%3A%2F%2Fmy.just.edu.cn%2F':
-              controller.evaluateJavascript(source: '''
+          final url = uri.toString();
+          if (url == settings.serviceHallLoginUrl) {
+            Log.logger.i('进入信息门户登录页');
+            controller.evaluateJavascript(source: '''
                       document.querySelector("#username").value="${user.serviceAccount}";
                       document.querySelector("#password").value="${user.servicePassword}";
                       document.querySelector("#passbutton").click()
                       ''');
-              break;
-            //服务大厅主页
-            case 'https://ids.v.just.edu.cn/_s2/students_sy/main.psp':
-              controller.evaluateJavascript(source: '''
-                          window.location.href="https://54a22a8aad6e5ffd02eb5278924100b5ids.v.just.edu.cn/sso.jsp";
+          }
+          if (url == settings.serviceHomeUrl) {
+            Log.logger.i('进入信息门户主页');
+            controller.evaluateJavascript(source: '''
+                          window.location.href="${settings.jwClickUrl}";
                           ''');
-              break;
-            //教务系统主页
-            case 'https://54a22a8aad6e5ffd02eb5278924100b5cas.v.just.edu.cn/jsxsd/framework/xsMain.jsp':
-              controller.evaluateJavascript(source: '''
+          }
+          if (url == settings.jwHomeUrl) {
+            Log.logger.i('进入教务系统主页');
+            controller.evaluateJavascript(source: '''
                           $postFunction
-                          httpPost("https://54a22a8aad6e5ffd02eb5278924100b5cas.v.just.edu.cn/jsxsd/xskb/xskb_list.do",{"xnxq01id":"${settings.currentSemester}"})
+                          httpPost("${settings.jwCourseUrl}",{"xnxq01id":"${settings.currentSemester}"})
                           ''');
-              break;
-            //课表页
-            case 'https://54a22a8aad6e5ffd02eb5278924100b5cas.v.just.edu.cn/jsxsd/xskb/xskb_list.do':
-              try {
-                Application.courseParser.action(await controller.getHtml());
-                context.read<CourseMap>()
-                  ..clearCourse()
-                  ..addCourseByList(Application.courseParser.courseList)
-                  ..remark = Application.courseParser.remark
-                  ..save();
-                user
-                  ..username = Application.courseParser.studentName
-                  ..save();
-                context.read<SettingsData>()
-                  ..semesterList = Application.courseParser.semesters
-                  ..save();
-                await Future.delayed(Duration(milliseconds: 200));
-                EasyLoading.showToast('课表获取成功');
-                Navigator.pushNamedAndRemoveUntil(
-                    context, '/', (route) => route == null);
-              } catch (e) {
-                EasyLoading.showError(e.toString());
-              }
-              break;
+          }
+          if (url == settings.jwCourseUrl) {
+            Log.logger.i('进入教务系统课表页');
+            try {
+              Application.courseParser.action(await controller.getHtml());
+              context.read<CourseMap>()
+                ..clearCourse()
+                ..addCourseByList(Application.courseParser.courseList)
+                ..remark = Application.courseParser.remark
+                ..save();
+              user
+                ..username = Application.courseParser.studentName
+                ..save();
+              context.read<SettingsData>()
+                ..semesterList = Application.courseParser.semesters
+                ..save();
+              await Future.delayed(Duration(milliseconds: 200));
+              EasyLoading.showToast('课表获取成功');
+              Navigator.pushNamedAndRemoveUntil(
+                  context, '/', (route) => route == null);
+            } catch (e) {
+              EasyLoading.showError(e.toString());
+            }
           }
         },
       );

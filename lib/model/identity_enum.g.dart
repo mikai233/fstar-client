@@ -18,7 +18,7 @@ class IdentityTypeAdapter extends TypeAdapter<IdentityType> {
       case 1:
         return IdentityType.graduate;
       default:
-        return null;
+        return IdentityType.undergraduate;
     }
   }
 

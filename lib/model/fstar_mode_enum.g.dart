@@ -18,7 +18,7 @@ class FStarModeAdapter extends TypeAdapter<FStarMode> {
       case 1:
         return FStarMode.ThirdParty;
       default:
-        return null;
+        return FStarMode.JUST;
     }
   }
 

@@ -158,58 +158,56 @@ class _JwLoginState extends State<JwLogin> with WidgetsBindingObserver {
                     url: 'https://vpn2.just.edu.cn',
                     onLoadComplete: (controller, uri) async {
                       Log.logger.i(uri.toString());
-                      switch (uri.toString()) {
-                        //服务大厅登录页
-                        case 'https://cas.v.just.edu.cn/cas/login?service=http%3A%2F%2Fmy.just.edu.cn%2F':
-                          controller.evaluateJavascript(source: '''
+                      final url = uri.toString();
+                      if (url == _settings.serviceHallLoginUrl) {
+                        Log.logger.i('进入信息门户登录页');
+                        controller.evaluateJavascript(source: '''
                       document.querySelector("#username").value="${_usernameController.text}";
                       document.querySelector("#password").value="${_passwordController.text}";
                       document.querySelector("#passbutton").click()
                       ''');
-                          break;
-                        //服务大厅主页
-                        case 'https://ids.v.just.edu.cn/_s2/students_sy/main.psp':
-                          userData
-                            ..serviceAccount = _usernameController.text
-                            ..servicePassword = _passwordController.text
-                            ..userNumber = _usernameController.text;
-                          controller.evaluateJavascript(source: '''
-                          window.location.href="https://54a22a8aad6e5ffd02eb5278924100b5ids.v.just.edu.cn/sso.jsp";
+                      }
+                      if (url == _settings.serviceHomeUrl) {
+                        Log.logger.i('进入信息门户主页');
+                        userData
+                          ..serviceAccount = _usernameController.text
+                          ..servicePassword = _passwordController.text
+                          ..userNumber = _usernameController.text;
+                        controller.evaluateJavascript(source: '''
+                          window.location.href="${_settings.jwClickUrl}";
                           ''');
-                          break;
-                        //教务系统主页
-                        case 'https://54a22a8aad6e5ffd02eb5278924100b5cas.v.just.edu.cn/jsxsd/framework/xsMain.jsp':
-                          controller.evaluateJavascript(source: '''
+                      }
+                      if (url == _settings.jwHomeUrl) {
+                        Log.logger.i('进入教务系统主页');
+                        controller.evaluateJavascript(source: '''
                           $postFunction
-                          httpPost("https://54a22a8aad6e5ffd02eb5278924100b5cas.v.just.edu.cn/jsxsd/xskb/xskb_list.do",{"xnxq01id":"${_settings.currentSemester}"});
+                          httpPost("${_settings.jwCourseUrl}",{"xnxq01id":"${_settings.currentSemester}"});
                           ''');
-                          break;
-                        //课表页
-                        case 'https://54a22a8aad6e5ffd02eb5278924100b5cas.v.just.edu.cn/jsxsd/xskb/xskb_list.do':
-                          try {
-                            Application.courseParser
-                                .action(await controller.getHtml());
-                            context.read<CourseMap>()
-                              ..clearCourse()
-                              ..addCourseByList(
-                                  Application.courseParser.courseList)
-                              ..remark = Application.courseParser.remark
-                              ..save();
-                            userData
-                              ..username = Application.courseParser.studentName
-                              ..save();
-                            context.read<SettingsData>()
-                              ..semesterList =
-                                  Application.courseParser.semesters
-                              ..save();
-                            await Future.delayed(Duration(milliseconds: 200));
-                            EasyLoading.showToast('课表获取成功');
-                            Navigator.pushNamedAndRemoveUntil(
-                                context, '/', (route) => route == null);
-                          } catch (e) {
-                            EasyLoading.showError(e.toString());
-                          }
-                          break;
+                      }
+                      if (url == _settings.jwCourseUrl) {
+                        Log.logger.i('进入教务系统课表页');
+                        try {
+                          Application.courseParser
+                              .action(await controller.getHtml());
+                          context.read<CourseMap>()
+                            ..clearCourse()
+                            ..addCourseByList(
+                                Application.courseParser.courseList)
+                            ..remark = Application.courseParser.remark
+                            ..save();
+                          userData
+                            ..username = Application.courseParser.studentName
+                            ..save();
+                          context.read<SettingsData>()
+                            ..semesterList = Application.courseParser.semesters
+                            ..save();
+                          await Future.delayed(Duration(milliseconds: 200));
+                          EasyLoading.showToast('课表获取成功');
+                          Navigator.pushNamedAndRemoveUntil(
+                              context, '/', (route) => route == null);
+                        } catch (e) {
+                          EasyLoading.showError(e.toString());
+                        }
                       }
                     },
                   );

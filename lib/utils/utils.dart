@@ -1651,7 +1651,7 @@ Future<File> downloadAndroid(String url, BuildContext context) async {
   return file;
 }
 
-String postFunction = '''
+final String postFunction = '''
             function httpPost (URL, PARAMS) {
                 let temp = document.createElement("form");
                 temp.action = URL;

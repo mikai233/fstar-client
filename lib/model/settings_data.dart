@@ -119,6 +119,39 @@ class SettingsData extends HiveObject with ChangeNotifier {
   @HiveField(41)
   DateTime _dayFlag; //更新消息一天只显示一次
 
+  //vpn2跳转url，不需要更新状态
+  @HiveField(42)
+  String serviceHallLoginUrl =
+      'https://client.v.just.edu.cn/http/webvpndfaddd2f321275de563c2a6cf21be58aacc9653cdb86077d69472aa37e64e57c/cas/login?service=https://client.v.just.edu.cn/enlink/api/client/auth/cas';
+  @HiveField(43)
+  String serviceHomeUrl =
+      'https://client.v.just.edu.cn/http/webvpn764a2e4853ae5e537560ba711c0f46bd/_s2/students_sy/main.psp';
+  @HiveField(44)
+  String jwHomeUrl =
+      'https://client.v.just.edu.cn/http/webvpneb26120c0b61d26f61ce45ea5ef07bf864a455884ca2133c138748630669de2c/jsxsd/framework/xsMain.jsp';
+  @HiveField(45)
+  String jwScoreUrl =
+      'https://client.v.just.edu.cn/http/webvpneb26120c0b61d26f61ce45ea5ef07bf864a455884ca2133c138748630669de2c/jsxsd/kscj/cjcx_list';
+  @HiveField(46)
+  String jwScore2Url =
+      'https://client.v.just.edu.cn/http/webvpneb26120c0b61d26f61ce45ea5ef07bf864a455884ca2133c138748630669de2c/jsxsd/kscj/cjtd_add_left';
+  @HiveField(47)
+  String jwCourseUrl =
+      'https://client.v.just.edu.cn/http/webvpneb26120c0b61d26f61ce45ea5ef07bf864a455884ca2133c138748630669de2c/jsxsd/xskb/xskb_list.do';
+  @HiveField(48)
+  String jwPjUrl =
+      'https://client.v.just.edu.cn/http/webvpneb26120c0b61d26f61ce45ea5ef07bf864a455884ca2133c138748630669de2c/jsxsd/xspj/xspj_find.do?Ves632DSdyV=NEW_XSD_JXPJ';
+  @HiveField(49)
+  String syLoginUrl =
+      'https://client.v.just.edu.cn/http/webvpne73681c95b0d384ea01cc5f6576497e6/sy/';
+  @HiveField(50)
+  String syHomeUrl =
+      'https://client.v.just.edu.cn/http/webvpne73681c95b0d384ea01cc5f6576497e6/sy/student/xsDefault.aspx';
+  @HiveField(51)
+  String jwClickUrl = 'https://client.v.just.edu.cn/http/webvpneb26120c0b61d26f61ce45ea5ef07bf864a455884ca2133c138748630669de2c/sso.jsp';
+  @HiveField(52)
+  String syClickUrl = 'https://client.v.just.edu.cn/http/webvpne73681c95b0d384ea01cc5f6576497e6/sy/';
+
   DateTime get dayFlag => _dayFlag;
 
   set dayFlag(DateTime value) {

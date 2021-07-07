@@ -58,13 +58,24 @@ class SettingsDataAdapter extends TypeAdapter<SettingsData> {
       .._scoreQueryMode = fields[38] as ScoreQueryMode
       .._scoreQuerySemester = fields[39] as String
       .._isNewUser = fields[40] as bool
-      .._dayFlag = fields[41] as DateTime;
+      .._dayFlag = fields[41] as DateTime
+      ..serviceHallLoginUrl = fields[42] as String
+      ..serviceHomeUrl = fields[43] as String
+      ..jwHomeUrl = fields[44] as String
+      ..jwScoreUrl = fields[45] as String
+      ..jwScore2Url = fields[46] as String
+      ..jwCourseUrl = fields[47] as String
+      ..jwPjUrl = fields[48] as String
+      ..syLoginUrl = fields[49] as String
+      ..syHomeUrl = fields[50] as String
+      ..jwClickUrl = fields[51] as String
+      ..syClickUrl = fields[52] as String;
   }
 
   @override
   void write(BinaryWriter writer, SettingsData obj) {
     writer
-      ..writeByte(42)
+      ..writeByte(53)
       ..writeByte(0)
       ..write(obj._onlyShowThisWeek)
       ..writeByte(1)
@@ -148,7 +159,29 @@ class SettingsDataAdapter extends TypeAdapter<SettingsData> {
       ..writeByte(40)
       ..write(obj._isNewUser)
       ..writeByte(41)
-      ..write(obj._dayFlag);
+      ..write(obj._dayFlag)
+      ..writeByte(42)
+      ..write(obj.serviceHallLoginUrl)
+      ..writeByte(43)
+      ..write(obj.serviceHomeUrl)
+      ..writeByte(44)
+      ..write(obj.jwHomeUrl)
+      ..writeByte(45)
+      ..write(obj.jwScoreUrl)
+      ..writeByte(46)
+      ..write(obj.jwScore2Url)
+      ..writeByte(47)
+      ..write(obj.jwCourseUrl)
+      ..writeByte(48)
+      ..write(obj.jwPjUrl)
+      ..writeByte(49)
+      ..write(obj.syLoginUrl)
+      ..writeByte(50)
+      ..write(obj.syHomeUrl)
+      ..writeByte(51)
+      ..write(obj.jwClickUrl)
+      ..writeByte(52)
+      ..write(obj.syClickUrl);
   }
 
   @override

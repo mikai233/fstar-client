@@ -249,15 +249,13 @@ void _uploadFile(
     @required MethodChannel methodChannel,
     @required ImagePicker picker}) async {
   try {
-    EasyLoading.show(status: '正在验证身份');
     final userData = getUserData();
-    if (userData.jwAccount == null || userData.jwPassword == null) {
-      EasyLoading.showError('请先验证教务系统账号再上传');
+    //这里不需要再登录验证，因为设置过账号就表示已经验证过了
+    if ((userData.jwAccount == null || userData.jwPassword == null) &&
+        (userData.serviceAccount == null || userData.servicePassword == null)) {
+      EasyLoading.showError('请先登录学校系统账号再上传');
       return;
     }
-    await JUST.instance
-        .validate(username: userData.jwAccount, password: userData.jwPassword);
-    await Future.delayed(Duration(milliseconds: 500));
     if (!await _autoLogin(context)) {
       EasyLoading.showError('登录失败');
       final prefs = await SharedPreferences.getInstance();

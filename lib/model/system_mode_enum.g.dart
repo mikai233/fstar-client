@@ -22,7 +22,7 @@ class SystemModeAdapter extends TypeAdapter<SystemMode> {
       case 3:
         return SystemMode.CLOUD;
       default:
-        return null;
+        return SystemMode.JUST;
     }
   }
 

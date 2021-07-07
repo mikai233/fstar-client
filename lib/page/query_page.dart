@@ -215,7 +215,7 @@ class _QueryPageState extends State<QueryPage>
                                             if (user.serviceAccount == null ||
                                                 user.servicePassword == null) {
                                               EasyLoading.showToast(
-                                                  '没有验证服务大厅账号');
+                                                  '没有验证信息门户账号');
                                               return;
                                             }
                                             if (settings.scoreQueryMode ==
@@ -725,76 +725,75 @@ class _QueryPageState extends State<QueryPage>
       url: 'https://vpn2.just.edu.cn',
       onLoadComplete: (controller, uri) async {
         Log.logger.i(uri.toString());
-        switch (uri.toString()) {
-          //服务大厅登录页
-          case 'https://cas.v.just.edu.cn/cas/login?service=http%3A%2F%2Fmy.just.edu.cn%2F':
-            controller.evaluateJavascript(source: '''
+        final url = uri.toString();
+        if (url == settingsData.serviceHallLoginUrl) {
+          Log.logger.i('进入信息门户登录页');
+          controller.evaluateJavascript(source: '''
                       document.querySelector("#username").value="${userData.serviceAccount}";
                       document.querySelector("#password").value="${userData.servicePassword}";
                       document.querySelector("#passbutton").click()
                       ''');
-            break;
-          //服务大厅主页
-          case 'https://ids.v.just.edu.cn/_s2/students_sy/main.psp':
-            controller.evaluateJavascript(source: '''
-                          window.location.href="https://54a22a8aad6e5ffd02eb5278924100b5ids.v.just.edu.cn/sso.jsp";
+        }
+        if (url == settingsData.serviceHomeUrl) {
+          Log.logger.i('进入信息门户主页');
+          controller.evaluateJavascript(source: '''
+                          window.location.href="${settingsData.jwClickUrl}";
                           ''');
-            break;
-          //教务系统主页
-          case 'https://54a22a8aad6e5ffd02eb5278924100b5cas.v.just.edu.cn/jsxsd/framework/xsMain.jsp':
-            var queryFunction = '';
-            if (settingsData.scoreQueryMode == ScoreQueryMode.DEFAULT) {
-              queryFunction = '''
-           httpPost("https://54a22a8aad6e5ffd02eb5278924100b5cas.v.just.edu.cn/jsxsd/kscj/cjcx_list",{"kksj":"${settingsData.scoreQuerySemester}","xsfs":"${settingsData.scoreDisplayMode.property()}"});
+        }
+        if (url == settingsData.jwHomeUrl) {
+          Log.logger.i('进入教务系统主页');
+          var queryFunction = '';
+          if (settingsData.scoreQueryMode == ScoreQueryMode.DEFAULT) {
+            queryFunction = '''
+           httpPost("${settingsData.jwScoreUrl}",{"kksj":"${settingsData.scoreQuerySemester}","xsfs":"${settingsData.scoreDisplayMode.property()}"});
            ''';
-            } else {
-              queryFunction = '''
-              httpPost("https://54a22a8aad6e5ffd02eb5278924100b5cas.v.just.edu.cn/jsxsd/kscj/cjtd_add_left",{"xnxq01id":"${settingsData.scoreQuerySemester}"});
+          } else {
+            queryFunction = '''
+              httpPost("${settingsData.jwScore2Url}",{"xnxq01id":"${settingsData.scoreQuerySemester}"});
               ''';
-            }
-            controller.evaluateJavascript(source: '''
+          }
+          controller.evaluateJavascript(source: '''
             $postFunction
             $queryFunction
             ''');
-            break;
-          case 'https://54a22a8aad6e5ffd02eb5278924100b5cas.v.just.edu.cn/jsxsd/kscj/cjcx_list':
-          case 'https://54a22a8aad6e5ffd02eb5278924100b5cas.v.just.edu.cn/jsxsd/kscj/cjtd_add_left':
-            try {
-              final html = await controller.getHtml();
-              Application.scoreParser.action(html);
-              var score = Application.scoreParser.scoreList;
-              if (score.isEmpty) {
-                EasyLoading.showToast('该学期没有成绩或者未评教');
-                Navigator.pop(context);
-                return;
-              }
-              final settings = getSettingsData();
-              if (settings.reverseScore) {
-                score = score.reversed.toList();
-              }
-              if (settings.saveScoreCloud &&
-                  settings.scoreDisplayMode == ScoreDisplayMode.MAX &&
-                  settings.scoreQueryMode == ScoreQueryMode.DEFAULT) {
-                compute(calculateDigest, score.toString()).then((digest) async {
-                  var prefs = await SharedPreferences.getInstance();
-                  var next = digest.toString();
-                  var pre = prefs.getString('scoreDigest');
-                  if (pre != next) {
-                    prefs.setString('scoreDigest', digest.toString());
-                    FStarNet().uploadScore(score);
-                  }
-                });
-              }
-              Navigator.pushReplacement(
-                  context, MaterialPageRoute(builder: (_) => ScorePage(score)));
-              context.read<ScoreList>()
-                ..list = score
-                ..save();
-            } catch (e) {
-              Log.logger.e(e.toString());
-              EasyLoading.showError(e.toString());
+        }
+        if (url == settingsData.jwScoreUrl || url == settingsData.jwScore2Url) {
+          Log.logger.i('进入教务系统成绩页');
+          try {
+            final html = await controller.getHtml();
+            Application.scoreParser.action(html);
+            var score = Application.scoreParser.scoreList;
+            if (score.isEmpty) {
+              EasyLoading.showToast('该学期没有成绩或者未评教');
+              Navigator.pop(context);
+              return;
             }
-            break;
+            final settings = getSettingsData();
+            if (settings.reverseScore) {
+              score = score.reversed.toList();
+            }
+            if (settings.saveScoreCloud &&
+                settings.scoreDisplayMode == ScoreDisplayMode.MAX &&
+                settings.scoreQueryMode == ScoreQueryMode.DEFAULT) {
+              compute(calculateDigest, score.toString()).then((digest) async {
+                var prefs = await SharedPreferences.getInstance();
+                var next = digest.toString();
+                var pre = prefs.getString('scoreDigest');
+                if (pre != next) {
+                  prefs.setString('scoreDigest', digest.toString());
+                  FStarNet().uploadScore(score);
+                }
+              });
+            }
+            Navigator.pushReplacement(
+                context, MaterialPageRoute(builder: (_) => ScorePage(score)));
+            context.read<ScoreList>()
+              ..list = score
+              ..save();
+          } catch (e) {
+            Log.logger.e(e.toString());
+            EasyLoading.showError(e.toString());
+          }
         }
       },
     );
