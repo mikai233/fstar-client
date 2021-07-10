@@ -395,21 +395,13 @@ class ToolPage extends StatelessWidget {
             url: 'https://vpn2.just.edu.cn',
             onLoadComplete: (controller, uri) async {
               Log.logger.i(uri.toString());
-              final url = uri.toString();
-              if (url == settings.serviceHallLoginUrl) {
-                Log.logger.i('进入信息门户登录页');
-                controller.evaluateJavascript(source: '''
-                      document.querySelector("#username").value="${user.serviceAccount}";
-                      document.querySelector("#password").value="${user.servicePassword}";
-                      document.querySelector("#passbutton").click()
-                      ''');
-              }
-              if (url == settings.serviceHomeUrl) {
-                Log.logger.i('进入信息门户主页');
-                controller.evaluateJavascript(source: '''
-                          window.location.href="${settings.jwClickUrl}";
-                          ''');
-              }
+              serviceLoginToServiceHome(
+                  uri: uri,
+                  controller: controller,
+                  settingsData: settings,
+                  args: Tuple2(user.serviceAccount, user.servicePassword));
+              serviceHomeToJwHome(
+                  uri: uri, controller: controller, settingsData: settings);
             },
           );
           pushPage(context, webview);
@@ -477,29 +469,18 @@ class ToolPage extends StatelessWidget {
             url: 'https://vpn2.just.edu.cn',
             onLoadComplete: (controller, uri) async {
               Log.logger.i(uri.toString());
-              final url = uri.toString();
-              if (url == settings.serviceHallLoginUrl) {
-                Log.logger.i('进入信息门户登录页');
-                controller.evaluateJavascript(source: '''
-                      document.querySelector("#username").value="${user.serviceAccount}";
-                      document.querySelector("#password").value="${user.servicePassword}";
-                      document.querySelector("#passbutton").click()
-                      ''');
-              }
-              if (url == settings.serviceHomeUrl) {
-                Log.logger.i('进入信息门户主页');
-                controller.evaluateJavascript(source: '''
-                          window.location.href="${settings.syClickUrl}";
-                          ''');
-              }
-              if (url == settings.syLoginUrl) {
-                Log.logger.i('进入试验系统登录页');
-                controller.evaluateJavascript(source: '''
-                      document.querySelector("#Login1_UserName").value="${user.syAccount}";
-                      document.querySelector("#Login1_PassWord").value="${user.syPassword}";
-                      document.querySelector("#Login1_ImageButton1").click()
-                  ''');
-              }
+              serviceLoginToServiceHome(
+                  uri: uri,
+                  controller: controller,
+                  settingsData: settings,
+                  args: Tuple2(user.serviceAccount, user.servicePassword));
+              serviceHomeToSySystemLogin(
+                  uri: uri, controller: controller, settingsData: settings);
+              sySystemLoginToSySystemHome(
+                  uri: uri,
+                  controller: controller,
+                  settingsData: settings,
+                  args: Tuple2(user.syAccount, user.syPassword));
             },
           );
           pushPage(context, webview);
@@ -581,15 +562,11 @@ class ToolPage extends StatelessWidget {
             url: 'https://vpn2.just.edu.cn',
             onLoadComplete: (controller, uri) async {
               Log.logger.i(uri.toString());
-              final url = uri.toString();
-              if (url == settings.serviceHallLoginUrl) {
-                Log.logger.i('进入信息门户登录页');
-                controller.evaluateJavascript(source: '''
-                      document.querySelector("#username").value="${user.serviceAccount}";
-                      document.querySelector("#password").value="${user.servicePassword}";
-                      document.querySelector("#passbutton").click()
-                      ''');
-              }
+              serviceLoginToServiceHome(
+                  uri: uri,
+                  controller: controller,
+                  settingsData: settings,
+                  args: Tuple2(user.serviceAccount, user.servicePassword));
             },
           );
           pushPage(context, webview);
@@ -623,27 +600,15 @@ class ToolPage extends StatelessWidget {
           url: 'https://vpn2.just.edu.cn',
           onLoadComplete: (controller, uri) async {
             Log.logger.i(uri.toString());
-            final url = uri.toString();
-            if (url == settings.serviceHallLoginUrl) {
-              Log.logger.i('进入信息门户登录页');
-              controller.evaluateJavascript(source: '''
-                      document.querySelector("#username").value="${user.serviceAccount}";
-                      document.querySelector("#password").value="${user.servicePassword}";
-                      document.querySelector("#passbutton").click()
-                      ''');
-            }
-            if (url == settings.serviceHomeUrl) {
-              Log.logger.i('进入信息门户主页');
-              controller.evaluateJavascript(source: '''
-                          window.location.href="${settings.jwClickUrl}";
-                          ''');
-            }
-            if (url == settings.jwHomeUrl) {
-              Log.logger.i('进入教务系统主页');
-              controller.evaluateJavascript(source: '''
-                          window.location.href="${settings.jwPjUrl}";
-                          ''');
-            }
+            serviceLoginToServiceHome(
+                uri: uri,
+                controller: controller,
+                settingsData: settings,
+                args: Tuple2(user.serviceAccount, user.servicePassword));
+            serviceHomeToJwHome(
+                uri: uri, controller: controller, settingsData: settings);
+            jwSystemToPj(
+                uri: uri, controller: controller, settingsData: settings);
           },
         );
         pushPage(context, webview);

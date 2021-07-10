@@ -28,11 +28,13 @@ import 'package:fstar/model/identity_enum.dart';
 import 'package:fstar/model/message_data.dart';
 import 'package:fstar/model/score_data.dart';
 import 'package:fstar/model/score_display_mode_enum.dart';
+import 'package:fstar/model/score_list.dart';
 import 'package:fstar/model/score_query_mode_enum.dart';
 import 'package:fstar/model/settings_data.dart';
 import 'package:fstar/model/system_mode_enum.dart';
 import 'package:fstar/model/user_data.dart';
 import 'package:fstar/page/privacy_policy_page.dart';
+import 'package:fstar/page/score_page.dart';
 import 'package:fstar/utils/FStarNet.dart';
 import 'package:fstar/utils/fstar_scroll_behavior.dart';
 import 'package:fstar/utils/logger.dart';
@@ -46,6 +48,7 @@ import 'package:package_info/package_info.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tuple/tuple.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 enum FPlatform {
@@ -1651,6 +1654,7 @@ Future<File> downloadAndroid(String url, BuildContext context) async {
   return file;
 }
 
+///JavaScript执行POST请求的function
 final String postFunction = '''
             function httpPost (URL, PARAMS) {
                 let temp = document.createElement("form");
@@ -1668,3 +1672,215 @@ final String postFunction = '''
                 temp.submit();
         }
 ''';
+
+///信息门户登录页跳转到信息门户主页
+///[args]为账号和密码的[Tuple2]
+void serviceLoginToServiceHome(
+    {@required Uri uri,
+    @required InAppWebViewController controller,
+    @required SettingsData settingsData,
+    @required Tuple2<String, String> args}) {
+  if (uri.path == Uri.parse(settingsData.serviceHallLoginUrl).path) {
+    Log.logger.i('进入信息门户登录页');
+    controller.evaluateJavascript(source: '''
+                      document.querySelector("#username").value="${args.item1}";
+                      document.querySelector("#password").value="${args.item2}";
+                      document.querySelector("#passbutton").click()
+                      ''');
+  }
+}
+
+///信息门户主页跳转到教务系统主页
+///如果[args]不为空，表示是验证账号阶段，把账号信息存入Hive
+void serviceHomeToJwHome(
+    {@required Uri uri,
+    @required InAppWebViewController controller,
+    @required SettingsData settingsData,
+    Tuple3<UserData, String, String> args}) {
+  if (uri.toString() == settingsData.serviceHomeUrl) {
+    Log.logger.i('进入信息门户主页');
+    if (args != null) {
+      args.item1
+        ..serviceAccount = args.item2
+        ..servicePassword = args.item3
+        ..userNumber = args.item2
+        ..save();
+    }
+    controller.evaluateJavascript(source: '''
+                          window.location.href="${settingsData.jwClickUrl}";
+                          ''');
+  }
+}
+
+///教务系统主页跳转到课表页
+void jwHomeToCourse(
+    {@required Uri uri,
+    @required InAppWebViewController controller,
+    @required SettingsData settingsData}) {
+  if (uri.toString() == settingsData.jwHomeUrl) {
+    Log.logger.i('进入教务系统主页');
+    controller.evaluateJavascript(source: '''
+                          $postFunction
+                          httpPost("${settingsData.jwCourseUrl}",{"xnxq01id":"${settingsData.currentSemester}"});
+                          ''');
+  }
+}
+
+///教务系统主页跳转到成绩页 成绩替代页
+void jwHomeToScore(
+    {@required Uri uri,
+    @required InAppWebViewController controller,
+    @required SettingsData settingsData}) {
+  if (uri.toString() == settingsData.jwHomeUrl) {
+    Log.logger.i('进入教务系统主页');
+    var queryFunction = '';
+    if (settingsData.scoreQueryMode == ScoreQueryMode.DEFAULT) {
+      queryFunction = '''
+           httpPost("${settingsData.jwScoreUrl}",{"kksj":"${settingsData.scoreQuerySemester}","xsfs":"${settingsData.scoreDisplayMode.property()}"});
+           ''';
+    } else {
+      queryFunction = '''
+              httpPost("${settingsData.jwScore2Url}",{"xnxq01id":"${settingsData.scoreQuerySemester}"});
+              ''';
+    }
+    controller.evaluateJavascript(source: '''
+            $postFunction
+            $queryFunction
+            ''');
+  }
+}
+
+///信息门户主页跳转实验系统登录页
+void serviceHomeToSySystemLogin(
+    {@required Uri uri,
+    @required InAppWebViewController controller,
+    @required SettingsData settingsData}) {
+  if (uri.toString() == settingsData.serviceHomeUrl) {
+    Log.logger.i('进入信息门户主页');
+    controller.evaluateJavascript(source: '''
+                          window.location.href="${settingsData.syClickUrl}";
+                          ''');
+  }
+}
+
+///实验系统登录页跳转实验系统主页
+void sySystemLoginToSySystemHome(
+    {@required Uri uri,
+    @required InAppWebViewController controller,
+    @required SettingsData settingsData,
+    @required Tuple2<String, String> args}) {
+  if (uri.toString() == settingsData.syLoginUrl) {
+    Log.logger.i('进入实验系统登录页');
+    controller.evaluateJavascript(source: '''
+                      document.querySelector("#Login1_UserName").value="${args.item1}";
+                      document.querySelector("#Login1_PassWord").value="${args.item2}";
+                      document.querySelector("#Login1_ImageButton1").click()
+                  ''');
+  }
+}
+
+///教务系统主页跳转到评教页
+void jwSystemToPj(
+    {@required Uri uri,
+    @required InAppWebViewController controller,
+    @required SettingsData settingsData}) {
+  if (uri.toString() == settingsData.jwHomeUrl) {
+    Log.logger.i('进入教务系统主页');
+    controller.evaluateJavascript(source: '''
+                          window.location.href="${settingsData.jwPjUrl}";
+                          ''');
+  }
+}
+
+///课表页具体逻辑
+void onCourse(
+    {@required Uri uri,
+    @required InAppWebViewController controller,
+    @required BuildContext context,
+    @required SettingsData settingsData,
+    @required UserData userData}) async {
+  Log.logger.i('进入教务系统课表页');
+  try {
+    Application.courseParser.action(await controller.getHtml());
+    context.read<CourseMap>()
+      ..clearCourse()
+      ..addCourseByList(Application.courseParser.courseList)
+      ..remark = Application.courseParser.remark
+      ..save();
+    userData
+      ..username = Application.courseParser.studentName
+      ..save();
+    context.read<SettingsData>()
+      ..semesterList = Application.courseParser.semesters
+      ..save();
+    await Future.delayed(Duration(milliseconds: 200));
+    EasyLoading.showToast('课表获取成功');
+    Navigator.pushNamedAndRemoveUntil(context, '/', (route) => route == null);
+  } catch (e) {
+    EasyLoading.showError(e.toString());
+  }
+}
+
+///成绩页具体逻辑
+void onScore(
+    {@required Uri uri,
+    @required InAppWebViewController controller,
+    @required BuildContext context,
+    @required SettingsData settingsData}) async {
+  if (uri.toString() == settingsData.jwScoreUrl ||
+      uri.toString() == settingsData.jwScore2Url) {
+    Log.logger.i('进入教务系统成绩页');
+    try {
+      final html = await controller.getHtml();
+      Application.scoreParser.action(html);
+      var score = Application.scoreParser.scoreList;
+      if (score.isEmpty) {
+        EasyLoading.showToast('该学期没有成绩或者未评教');
+        Navigator.pop(context);
+        return;
+      }
+      final settings = getSettingsData();
+      if (settings.reverseScore) {
+        score = score.reversed.toList();
+      }
+      if (settings.saveScoreCloud &&
+          settings.scoreDisplayMode == ScoreDisplayMode.MAX &&
+          settings.scoreQueryMode == ScoreQueryMode.DEFAULT) {
+        compute(calculateDigest, score.toString()).then((digest) async {
+          var prefs = await SharedPreferences.getInstance();
+          var next = digest.toString();
+          var pre = prefs.getString('scoreDigest');
+          if (pre != next) {
+            prefs.setString('scoreDigest', digest.toString());
+            FStarNet().uploadScore(score);
+          }
+        });
+      }
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (_) => ScorePage(score)));
+      context.read<ScoreList>()
+        ..list = score
+        ..save();
+    } catch (e) {
+      Log.logger.e(e.toString());
+      EasyLoading.showError(e.toString());
+    }
+  }
+}
+
+///进入实验系统主页，将账号密码存入[UserData]
+void onSyHome(
+    {@required Uri uri,
+    @required InAppWebViewController controller,
+    @required BuildContext context,
+    @required UserData userData,
+    @required Tuple2<String, String> args}) {
+  if (uri.toString().contains('/sy/student/xsDefault.aspx')) {
+    userData
+      ..syAccount = args.item1
+      ..syPassword = args.item2
+      ..save();
+    Navigator.pop(context);
+    Navigator.pop(context);
+  }
+}

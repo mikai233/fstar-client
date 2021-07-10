@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:fstar/model/application.dart';
 import 'package:fstar/model/box_name.dart';
-import 'package:fstar/model/course_map.dart';
 import 'package:fstar/model/identity_enum.dart';
 import 'package:fstar/model/score_display_mode_enum.dart';
 import 'package:fstar/model/score_list.dart';
@@ -28,6 +27,7 @@ import 'package:just/just.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tuple/tuple.dart';
 
 class QueryPage extends StatefulWidget {
   @override
@@ -200,8 +200,6 @@ class _QueryPageState extends State<QueryPage>
                                                   ),
                                                   btnOk: TimerCountDownButton(
                                                     onPressed: () {
-                                                      print(
-                                                          'dddddddddddddddddddddd');
                                                       _handleScoreQuery(
                                                           context);
                                                       Navigator.pop(context);
@@ -725,76 +723,20 @@ class _QueryPageState extends State<QueryPage>
       url: 'https://vpn2.just.edu.cn',
       onLoadComplete: (controller, uri) async {
         Log.logger.i(uri.toString());
-        final url = uri.toString();
-        if (url == settingsData.serviceHallLoginUrl) {
-          Log.logger.i('进入信息门户登录页');
-          controller.evaluateJavascript(source: '''
-                      document.querySelector("#username").value="${userData.serviceAccount}";
-                      document.querySelector("#password").value="${userData.servicePassword}";
-                      document.querySelector("#passbutton").click()
-                      ''');
-        }
-        if (url == settingsData.serviceHomeUrl) {
-          Log.logger.i('进入信息门户主页');
-          controller.evaluateJavascript(source: '''
-                          window.location.href="${settingsData.jwClickUrl}";
-                          ''');
-        }
-        if (url == settingsData.jwHomeUrl) {
-          Log.logger.i('进入教务系统主页');
-          var queryFunction = '';
-          if (settingsData.scoreQueryMode == ScoreQueryMode.DEFAULT) {
-            queryFunction = '''
-           httpPost("${settingsData.jwScoreUrl}",{"kksj":"${settingsData.scoreQuerySemester}","xsfs":"${settingsData.scoreDisplayMode.property()}"});
-           ''';
-          } else {
-            queryFunction = '''
-              httpPost("${settingsData.jwScore2Url}",{"xnxq01id":"${settingsData.scoreQuerySemester}"});
-              ''';
-          }
-          controller.evaluateJavascript(source: '''
-            $postFunction
-            $queryFunction
-            ''');
-        }
-        if (url == settingsData.jwScoreUrl || url == settingsData.jwScore2Url) {
-          Log.logger.i('进入教务系统成绩页');
-          try {
-            final html = await controller.getHtml();
-            Application.scoreParser.action(html);
-            var score = Application.scoreParser.scoreList;
-            if (score.isEmpty) {
-              EasyLoading.showToast('该学期没有成绩或者未评教');
-              Navigator.pop(context);
-              return;
-            }
-            final settings = getSettingsData();
-            if (settings.reverseScore) {
-              score = score.reversed.toList();
-            }
-            if (settings.saveScoreCloud &&
-                settings.scoreDisplayMode == ScoreDisplayMode.MAX &&
-                settings.scoreQueryMode == ScoreQueryMode.DEFAULT) {
-              compute(calculateDigest, score.toString()).then((digest) async {
-                var prefs = await SharedPreferences.getInstance();
-                var next = digest.toString();
-                var pre = prefs.getString('scoreDigest');
-                if (pre != next) {
-                  prefs.setString('scoreDigest', digest.toString());
-                  FStarNet().uploadScore(score);
-                }
-              });
-            }
-            Navigator.pushReplacement(
-                context, MaterialPageRoute(builder: (_) => ScorePage(score)));
-            context.read<ScoreList>()
-              ..list = score
-              ..save();
-          } catch (e) {
-            Log.logger.e(e.toString());
-            EasyLoading.showError(e.toString());
-          }
-        }
+        serviceLoginToServiceHome(
+            uri: uri,
+            controller: controller,
+            settingsData: settingsData,
+            args: Tuple2(userData.serviceAccount, userData.servicePassword));
+        serviceHomeToJwHome(
+            uri: uri, controller: controller, settingsData: settingsData);
+        jwHomeToScore(
+            uri: uri, controller: controller, settingsData: settingsData);
+        onScore(
+            uri: uri,
+            controller: controller,
+            context: context,
+            settingsData: settingsData);
       },
     );
     pushPage(context, webview);

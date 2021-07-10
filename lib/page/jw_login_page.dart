@@ -19,6 +19,7 @@ import 'package:fstar/utils/utils.dart';
 import 'package:just/just.dart';
 import 'package:provider/provider.dart';
 import 'package:toggle_switch/toggle_switch.dart';
+import 'package:tuple/tuple.dart';
 
 //教务系统登录页
 class JwLogin extends StatefulWidget {
@@ -158,57 +159,29 @@ class _JwLoginState extends State<JwLogin> with WidgetsBindingObserver {
                     url: 'https://vpn2.just.edu.cn',
                     onLoadComplete: (controller, uri) async {
                       Log.logger.i(uri.toString());
-                      final url = uri.toString();
-                      if (url == _settings.serviceHallLoginUrl) {
-                        Log.logger.i('进入信息门户登录页');
-                        controller.evaluateJavascript(source: '''
-                      document.querySelector("#username").value="${_usernameController.text}";
-                      document.querySelector("#password").value="${_passwordController.text}";
-                      document.querySelector("#passbutton").click()
-                      ''');
-                      }
-                      if (url == _settings.serviceHomeUrl) {
-                        Log.logger.i('进入信息门户主页');
-                        userData
-                          ..serviceAccount = _usernameController.text
-                          ..servicePassword = _passwordController.text
-                          ..userNumber = _usernameController.text;
-                        controller.evaluateJavascript(source: '''
-                          window.location.href="${_settings.jwClickUrl}";
-                          ''');
-                      }
-                      if (url == _settings.jwHomeUrl) {
-                        Log.logger.i('进入教务系统主页');
-                        controller.evaluateJavascript(source: '''
-                          $postFunction
-                          httpPost("${_settings.jwCourseUrl}",{"xnxq01id":"${_settings.currentSemester}"});
-                          ''');
-                      }
-                      if (url == _settings.jwCourseUrl) {
-                        Log.logger.i('进入教务系统课表页');
-                        try {
-                          Application.courseParser
-                              .action(await controller.getHtml());
-                          context.read<CourseMap>()
-                            ..clearCourse()
-                            ..addCourseByList(
-                                Application.courseParser.courseList)
-                            ..remark = Application.courseParser.remark
-                            ..save();
-                          userData
-                            ..username = Application.courseParser.studentName
-                            ..save();
-                          context.read<SettingsData>()
-                            ..semesterList = Application.courseParser.semesters
-                            ..save();
-                          await Future.delayed(Duration(milliseconds: 200));
-                          EasyLoading.showToast('课表获取成功');
-                          Navigator.pushNamedAndRemoveUntil(
-                              context, '/', (route) => route == null);
-                        } catch (e) {
-                          EasyLoading.showError(e.toString());
-                        }
-                      }
+                      serviceLoginToServiceHome(
+                        uri: uri,
+                        controller: controller,
+                        settingsData: _settings,
+                        args: Tuple2(
+                            userData.serviceAccount, userData.servicePassword),
+                      );
+                      serviceHomeToJwHome(
+                          uri: uri,
+                          controller: controller,
+                          settingsData: _settings,
+                          args: Tuple3(userData, _usernameController.text,
+                              _passwordController.text));
+                      jwHomeToCourse(
+                          uri: uri,
+                          controller: controller,
+                          settingsData: _settings);
+                      onCourse(
+                          uri: uri,
+                          controller: controller,
+                          context: context,
+                          settingsData: _settings,
+                          userData: userData);
                     },
                   );
                   pushPage(context, webview);

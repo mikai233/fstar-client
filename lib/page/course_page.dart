@@ -246,51 +246,22 @@ class _CoursePageState extends State<CoursePage>
         url: 'https://vpn2.just.edu.cn',
         onLoadComplete: (controller, uri) async {
           Log.logger.i(uri.toString());
-          final url = uri.toString();
-          if (url == settings.serviceHallLoginUrl) {
-            Log.logger.i('进入信息门户登录页');
-            controller.evaluateJavascript(source: '''
-                      document.querySelector("#username").value="${user.serviceAccount}";
-                      document.querySelector("#password").value="${user.servicePassword}";
-                      document.querySelector("#passbutton").click()
-                      ''');
-          }
-          if (url == settings.serviceHomeUrl) {
-            Log.logger.i('进入信息门户主页');
-            controller.evaluateJavascript(source: '''
-                          window.location.href="${settings.jwClickUrl}";
-                          ''');
-          }
-          if (url == settings.jwHomeUrl) {
-            Log.logger.i('进入教务系统主页');
-            controller.evaluateJavascript(source: '''
-                          $postFunction
-                          httpPost("${settings.jwCourseUrl}",{"xnxq01id":"${settings.currentSemester}"})
-                          ''');
-          }
-          if (url == settings.jwCourseUrl) {
-            Log.logger.i('进入教务系统课表页');
-            try {
-              Application.courseParser.action(await controller.getHtml());
-              context.read<CourseMap>()
-                ..clearCourse()
-                ..addCourseByList(Application.courseParser.courseList)
-                ..remark = Application.courseParser.remark
-                ..save();
-              user
-                ..username = Application.courseParser.studentName
-                ..save();
-              context.read<SettingsData>()
-                ..semesterList = Application.courseParser.semesters
-                ..save();
-              await Future.delayed(Duration(milliseconds: 200));
-              EasyLoading.showToast('课表获取成功');
-              Navigator.pushNamedAndRemoveUntil(
-                  context, '/', (route) => route == null);
-            } catch (e) {
-              EasyLoading.showError(e.toString());
-            }
-          }
+          serviceLoginToServiceHome(
+            uri: uri,
+            controller: controller,
+            settingsData: settings,
+            args: Tuple2(user.serviceAccount, user.servicePassword),
+          );
+          serviceHomeToJwHome(
+              uri: uri, controller: controller, settingsData: settings);
+          jwHomeToCourse(
+              uri: uri, controller: controller, settingsData: settings);
+          onCourse(
+              uri: uri,
+              controller: controller,
+              context: context,
+              settingsData: settings,
+              userData: user);
         },
       );
       pushPage(context, webview);

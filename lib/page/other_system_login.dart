@@ -9,6 +9,7 @@ import 'package:fstar/utils/logger.dart';
 import 'package:fstar/utils/utils.dart';
 import 'package:just/just.dart';
 import 'package:provider/provider.dart';
+import 'package:tuple/tuple.dart';
 
 import 'fstar_webview.dart';
 
@@ -187,33 +188,26 @@ class _OtherLoginState extends State<OtherLogin> with WidgetsBindingObserver {
           url: 'https://vpn2.just.edu.cn',
           onLoadComplete: (controller, uri) async {
             Log.logger.i(uri.toString());
-            final url = uri.toString();
-            if (url == settings.serviceHallLoginUrl) {
-              controller.evaluateJavascript(source: '''
-                      document.querySelector("#username").value="${user.serviceAccount}";
-                      document.querySelector("#password").value="${user.servicePassword}";
-                      document.querySelector("#passbutton").click()
-                      ''');
-            }
-            if (url == settings.serviceHomeUrl) {
-              controller.evaluateJavascript(source: '''
-                          window.location.href="${settings.syClickUrl}";
-                          ''');
-            }
-            if (url == settings.syLoginUrl) {
-              controller.evaluateJavascript(source: '''
-                      document.querySelector("#Login1_UserName").value="${_usernameController.text}";
-                      document.querySelector("#Login1_PassWord").value="${_passwordController.text}";
-                      document.querySelector("#Login1_ImageButton1").click()
-                  ''');
-            }
-            if (url.contains('/sy/student/xsDefault.aspx')) {
-              user
-                ..syAccount = _usernameController.text
-                ..syPassword = _passwordController.text;
-              Navigator.pop(context);
-              Navigator.pop(context);
-            }
+            serviceLoginToServiceHome(
+                uri: uri,
+                controller: controller,
+                settingsData: settings,
+                args: Tuple2(user.serviceAccount, user.servicePassword));
+            serviceHomeToSySystemLogin(
+                uri: uri, controller: controller, settingsData: settings);
+            sySystemLoginToSySystemHome(
+                uri: uri,
+                controller: controller,
+                settingsData: settings,
+                args:
+                    Tuple2(_usernameController.text, _passwordController.text));
+            onSyHome(
+                uri: uri,
+                controller: controller,
+                context: context,
+                userData: user,
+                args:
+                    Tuple2(_usernameController.text, _passwordController.text));
           },
         );
         pushPage(context, webview);
