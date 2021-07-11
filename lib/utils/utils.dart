@@ -1799,25 +1799,27 @@ void onCourse(
     @required BuildContext context,
     @required SettingsData settingsData,
     @required UserData userData}) async {
-  Log.logger.i('进入教务系统课表页');
-  try {
-    Application.courseParser.action(await controller.getHtml());
-    context.read<CourseMap>()
-      ..clearCourse()
-      ..addCourseByList(Application.courseParser.courseList)
-      ..remark = Application.courseParser.remark
-      ..save();
-    userData
-      ..username = Application.courseParser.studentName
-      ..save();
-    context.read<SettingsData>()
-      ..semesterList = Application.courseParser.semesters
-      ..save();
-    await Future.delayed(Duration(milliseconds: 200));
-    EasyLoading.showToast('课表获取成功');
-    Navigator.pushNamedAndRemoveUntil(context, '/', (route) => route == null);
-  } catch (e) {
-    EasyLoading.showError(e.toString());
+  if (uri.toString() == settingsData.jwCourseUrl) {
+    Log.logger.i('进入教务系统课表页');
+    try {
+      Application.courseParser.action(await controller.getHtml());
+      context.read<CourseMap>()
+        ..clearCourse()
+        ..addCourseByList(Application.courseParser.courseList)
+        ..remark = Application.courseParser.remark
+        ..save();
+      userData
+        ..username = Application.courseParser.studentName
+        ..save();
+      context.read<SettingsData>()
+        ..semesterList = Application.courseParser.semesters
+        ..save();
+      await Future.delayed(Duration(milliseconds: 200));
+      EasyLoading.showToast('课表获取成功');
+      Navigator.pushNamedAndRemoveUntil(context, '/', (route) => route == null);
+    } catch (e) {
+      EasyLoading.showError(e.toString());
+    }
   }
 }
 
