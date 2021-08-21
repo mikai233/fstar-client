@@ -507,7 +507,7 @@ class ToolPage extends StatelessWidget {
           if (user.vpnAccount != null && user.vpnPassword != null) {
             final response = await VPN.instance.vpnLogin(
                 vpnUsername: user.vpnAccount, vpnPassword: user.vpnPassword);
-            final cookie = response.request.headers[HttpHeaders.cookieHeader];
+            final cookie = response.headers[HttpHeaders.cookieHeader].first;
             setCookie(
                 cookie: cookie,
                 url: 'https://vpn.just.edu.cn/dana/home/index.cgi');
@@ -680,11 +680,11 @@ class ToolPage extends StatelessWidget {
           }
           var response = await YJS.instance
               .login(username: user.jwAccount, password: user.jwPassword);
-          var cookie = response.request.headers[HttpHeaders.cookieHeader];
-          await setCookie(cookie: cookie, url: response.request.uri.toString());
+          var cookie = response.headers[HttpHeaders.cookieHeader].first;
+          await setCookie(cookie: cookie, url: response.realUri.toString());
           pushPage(
             context,
-            FStarWebView(url: response.request.uri.toString()),
+            FStarWebView(url: response.realUri.toString()),
           );
           EasyLoading.dismiss();
           break;
@@ -702,9 +702,9 @@ class ToolPage extends StatelessWidget {
               password: user.jwPassword,
               vpnUsername: user.vpnAccount,
               vpnPassword: user.vpnPassword);
-          var cookie = response.request.headers[HttpHeaders.cookieHeader];
-          setCookie(cookie: cookie, url: response.request.uri.toString());
-          pushPage(context, FStarWebView(url: response.request.uri.toString()));
+          var cookie = response.headers[HttpHeaders.cookieHeader].first;
+          setCookie(cookie: cookie, url: response.realUri.toString());
+          pushPage(context, FStarWebView(url: response.realUri.toString()));
           EasyLoading.dismiss();
           break;
         case SystemMode.VPN2:

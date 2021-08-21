@@ -1187,7 +1187,7 @@ Future showScoreDetails(BuildContext context, ScoreData scoreData) {
   return AwesomeDialog(
     context: context,
     dialogType: DialogType.NO_HEADER,
-    onDissmissCallback: () {
+    onDissmissCallback: (type) {
       controller.dispose();
     },
     body: Container(
@@ -1632,7 +1632,7 @@ Future<File> downloadAndroid(String url, BuildContext context) async {
         ),
       ],
     ),
-    onDissmissCallback: () {
+    onDissmissCallback: (type) {
       if (!isComplete) {
         cancelToken.cancel();
       }

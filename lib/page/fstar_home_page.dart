@@ -338,7 +338,7 @@ class _FStarHomePageState extends State<FStarHomePage>
                   AwesomeDialog(
                     context: context,
                     dialogType: DialogType.NO_HEADER,
-                    onDissmissCallback: () {
+                    onDissmissCallback: (type) {
                       controller.dispose();
                     },
                     body: Container(

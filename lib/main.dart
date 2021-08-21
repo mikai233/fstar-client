@@ -1,14 +1,12 @@
 import 'dart:io';
 
 import 'package:device_info/device_info.dart';
-import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:fstar/model/application.dart';
 import 'package:fstar/model/box_name.dart';
 import 'package:fstar/model/color_adapter.dart';
 import 'package:fstar/model/course_data.dart';
@@ -31,7 +29,6 @@ import 'package:fstar/page/jw_login_page.dart';
 import 'package:fstar/page/privacy_policy_page.dart';
 import 'package:fstar/page/settings_page.dart';
 import 'package:fstar/page/time_table.dart';
-import 'package:fstar/route/routes.dart';
 import 'package:fstar/utils/utils.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -55,7 +52,6 @@ void main() async {
     _initBoxValue();
     _setRefreshRate().catchError(print);
     _setScreenFeature();
-    _configRoutes();
     configRequesterAndParser();
     _configEasyLoading();
   } catch (e) {
@@ -203,16 +199,11 @@ void _initBoxValue() {
 //设置状态栏透明
 void _setScreenFeature() {
   if (Platform.isAndroid) {
-    SystemUiOverlayStyle systemUiOverlayStyle =
-        SystemUiOverlayStyle(statusBarColor: Colors.transparent);
+    SystemUiOverlayStyle systemUiOverlayStyle = SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark);
     SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
   }
-}
-
-void _configRoutes() {
-  final router = FluroRouter();
-  Routes.configureRoutes(router);
-  Application.router = router;
 }
 
 void _configEasyLoading() {

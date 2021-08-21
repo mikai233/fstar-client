@@ -1,11 +1,9 @@
-import 'package:fluro/fluro.dart';
 import 'package:fstar/model/course_data.dart';
 import 'package:fstar/model/score_data.dart';
 import 'package:fstar/utils/parser.dart';
 import 'package:fstar/utils/requester.dart';
 
 class Application {
-  static FluroRouter router;
   static DefaultCourseParser courseParser;
   static DefaultScoreParser scoreParser;
   static DefaultCourseRequester courseRequester;

@@ -1,14 +1,12 @@
 import 'dart:io';
 
 import 'package:awesome_dialog/awesome_dialog.dart';
-import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
-import 'package:fstar/model/application.dart';
 import 'package:fstar/model/box_name.dart';
 import 'package:fstar/model/fstar_mode_enum.dart';
 import 'package:fstar/model/identity_enum.dart';
@@ -21,7 +19,7 @@ import 'package:fstar/model/theme_color_data.dart';
 import 'package:fstar/page/log_page.dart';
 import 'package:fstar/page/message_history_page.dart';
 import 'package:fstar/page/privacy_policy_page.dart';
-import 'package:fstar/route/routes.dart';
+import 'package:fstar/page/time_table.dart';
 import 'package:fstar/utils/fstar_scroll_behavior.dart';
 import 'package:fstar/utils/logger.dart';
 import 'package:fstar/utils/utils.dart';
@@ -158,7 +156,7 @@ class _SettingsPage extends State<SettingsPage> {
                   AwesomeDialog(
                     context: context,
                     dialogType: DialogType.NO_HEADER,
-                    onDissmissCallback: () {
+                    onDissmissCallback: (type) {
                       controller.dispose();
                     },
                     body: ConstrainedBox(
@@ -520,8 +518,7 @@ class _SettingsPage extends State<SettingsPage> {
       ListTile(
         title: Text('上课时间'),
         onTap: () {
-          Application.router.navigateTo(context, Routes.timeTable,
-              transition: TransitionType.material);
+          pushPage(context, TimeTable());
         },
         trailing: Icon(Icons.chevron_right),
       ),

@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:awesome_dialog/awesome_dialog.dart';
-import 'package:fluro/fluro.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +8,6 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:fstar/model/application.dart';
 import 'package:fstar/model/course_map.dart';
 import 'package:fstar/model/fstar_mode_enum.dart';
 import 'package:fstar/model/identity_enum.dart';
@@ -19,7 +17,7 @@ import 'package:fstar/page/faq_page.dart';
 import 'package:fstar/page/import_webview.dart';
 import 'package:fstar/page/jw_login_page.dart';
 import 'package:fstar/page/other_system_login.dart';
-import 'package:fstar/route/routes.dart';
+import 'package:fstar/page/settings_page.dart';
 import 'package:fstar/utils/fstar_scroll_behavior.dart';
 import 'package:fstar/utils/logger.dart';
 import 'package:fstar/utils/utils.dart';
@@ -162,8 +160,7 @@ class UserDrawer extends StatelessWidget {
         ),
         title: Text('设置'),
         onTap: () {
-          Application.router.navigateTo(context, Routes.settings,
-              transition: TransitionType.material);
+          pushPage(context, SettingsPage());
         },
       ),
       ListTile(
