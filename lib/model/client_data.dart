@@ -5,67 +5,27 @@ class ClientData {
   final String appVersion;
   final int buildNumber;
   final String androidId;
-  final String adnoridVersion;
+  final String androidVersion;
   final String brand;
   final String device;
   final String model;
+  final String product;
   final String platform;
 
-//<editor-fold desc="Data Methods" defaultstate="collapsed">
+//<editor-fold desc="Data Methods">
 
-  const ClientData({
+  ClientData({
     @required this.id,
     @required this.appVersion,
     @required this.buildNumber,
     @required this.androidId,
-    @required this.adnoridVersion,
+    @required this.androidVersion,
     @required this.brand,
     @required this.device,
     @required this.model,
+    @required this.product,
     @required this.platform,
   });
-
-  ClientData copyWith({
-    int id,
-    String appVersion,
-    int buildNumber,
-    String androidId,
-    String adnoridVersion,
-    String brand,
-    String device,
-    String model,
-    String platform,
-  }) {
-    if ((id == null || identical(id, this.id)) &&
-        (appVersion == null || identical(appVersion, this.appVersion)) &&
-        (buildNumber == null || identical(buildNumber, this.buildNumber)) &&
-        (androidId == null || identical(androidId, this.androidId)) &&
-        (adnoridVersion == null ||
-            identical(adnoridVersion, this.adnoridVersion)) &&
-        (brand == null || identical(brand, this.brand)) &&
-        (device == null || identical(device, this.device)) &&
-        (model == null || identical(model, this.model)) &&
-        (platform == null || identical(platform, this.platform))) {
-      return this;
-    }
-
-    return new ClientData(
-      id: id ?? this.id,
-      appVersion: appVersion ?? this.appVersion,
-      buildNumber: buildNumber ?? this.buildNumber,
-      androidId: androidId ?? this.androidId,
-      adnoridVersion: adnoridVersion ?? this.adnoridVersion,
-      brand: brand ?? this.brand,
-      device: device ?? this.device,
-      model: model ?? this.model,
-      platform: platform ?? this.platform,
-    );
-  }
-
-  @override
-  String toString() {
-    return 'ClientData{id: $id, appVersion: $appVersion, buildNumber: $buildNumber, androidId: $androidId, adnoridVersion: $adnoridVersion, brand: $brand, device: $device, model: $model, platform: $platform}';
-  }
 
   @override
   bool operator ==(Object other) =>
@@ -76,10 +36,11 @@ class ClientData {
           appVersion == other.appVersion &&
           buildNumber == other.buildNumber &&
           androidId == other.androidId &&
-          adnoridVersion == other.adnoridVersion &&
+          androidVersion == other.androidVersion &&
           brand == other.brand &&
           device == other.device &&
           model == other.model &&
+          product == other.product &&
           platform == other.platform);
 
   @override
@@ -88,41 +49,84 @@ class ClientData {
       appVersion.hashCode ^
       buildNumber.hashCode ^
       androidId.hashCode ^
-      adnoridVersion.hashCode ^
+      androidVersion.hashCode ^
       brand.hashCode ^
       device.hashCode ^
       model.hashCode ^
+      product.hashCode ^
       platform.hashCode;
 
-  factory ClientData.fromMap(Map<String, dynamic> map) {
-    return new ClientData(
-      id: map['id'] as int,
-      appVersion: map['appVersion'] as String,
-      buildNumber: map['buildNumber'] as int,
-      androidId: map['androidId'] as String,
-      adnoridVersion: map['adnoridVersion'] as String,
-      brand: map['brand'] as String,
-      device: map['device'] as String,
-      model: map['model'] as String,
-      platform: map['platform'] as String,
+  @override
+  String toString() {
+    return 'ClientData{' +
+        ' id: $id,' +
+        ' appVersion: $appVersion,' +
+        ' buildNumber: $buildNumber,' +
+        ' androidId: $androidId,' +
+        ' androidVersion: $androidVersion,' +
+        ' brand: $brand,' +
+        ' device: $device,' +
+        ' model: $model,' +
+        ' product: $product,' +
+        ' platform: $platform,' +
+        '}';
+  }
+
+  ClientData copyWith({
+    int id,
+    String appVersion,
+    int buildNumber,
+    String androidId,
+    String androidVersion,
+    String brand,
+    String device,
+    String model,
+    String product,
+    String platform,
+  }) {
+    return ClientData(
+      id: id ?? this.id,
+      appVersion: appVersion ?? this.appVersion,
+      buildNumber: buildNumber ?? this.buildNumber,
+      androidId: androidId ?? this.androidId,
+      androidVersion: androidVersion ?? this.androidVersion,
+      brand: brand ?? this.brand,
+      device: device ?? this.device,
+      model: model ?? this.model,
+      product: product ?? this.product,
+      platform: platform ?? this.platform,
     );
   }
 
   Map<String, dynamic> toMap() {
-    // ignore: unnecessary_cast
     return {
       'id': this.id,
       'appVersion': this.appVersion,
       'buildNumber': this.buildNumber,
       'androidId': this.androidId,
-      'adnoridVersion': this.adnoridVersion,
+      'androidVersion': this.androidVersion,
       'brand': this.brand,
       'device': this.device,
       'model': this.model,
+      'product': this.product,
       'platform': this.platform,
-    } as Map<String, dynamic>;
+    };
+  }
+
+  factory ClientData.fromMap(Map<String, dynamic> map) {
+    return ClientData(
+      id: map['id'] as int,
+      appVersion: map['appVersion'] as String,
+      buildNumber: map['buildNumber'] as int,
+      androidId: map['androidId'] as String,
+      androidVersion: map['androidVersion'] as String,
+      brand: map['brand'] as String,
+      device: map['device'] as String,
+      model: map['model'] as String,
+      product: map['product'] as String,
+      platform: map['platform'] as String,
+    );
   }
 
 //</editor-fold>
-
 }

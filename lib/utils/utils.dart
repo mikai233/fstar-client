@@ -1397,7 +1397,7 @@ Future<void> showMessage(BuildContext context) async {
     if (digest == localDigest) {
       return;
     }
-    var messages = messageData.content.split('-');
+    var messages = messageData.content.split('\r\n');
     final controller = ScrollController();
     AwesomeDialog(
         context: context,
@@ -1446,9 +1446,10 @@ Future<void> updateVitality(BuildContext context) async {
           appVersion: packageInfo.version,
           buildNumber: int.parse(packageInfo.buildNumber),
           androidId: androidInfo.androidId,
-          adnoridVersion: androidInfo.version.release,
+          androidVersion: androidInfo.version.release,
           brand: androidInfo.brand,
           device: androidInfo.device,
+          product: androidInfo.product,
           model: androidInfo.model,
           platform: 'android');
       try {
@@ -1461,7 +1462,8 @@ Future<void> updateVitality(BuildContext context) async {
       // TODO: Handle this case.
       break;
     case FPlatform.iOS:
-      // TODO: Handle this case.
+      var iosInfo = await DeviceInfoPlugin().iosInfo;
+      var packageInfo = await PackageInfo.fromPlatform();
       break;
     case FPlatform.linux:
       // TODO: Handle this case.
@@ -1494,7 +1496,7 @@ Future<bool> showCheckVersion(BuildContext context) async {
     if (changelog.buildNumber > buildNumber) {
       newVersion = true;
       final scrollController = ScrollController();
-      var messages = changelog.description.split('-');
+      var messages = changelog.description.split('\r\n');
       AwesomeDialog(
         context: context,
         dialogType: DialogType.NO_HEADER,

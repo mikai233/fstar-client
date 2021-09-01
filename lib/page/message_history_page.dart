@@ -46,7 +46,7 @@ class _MessageHistoryState extends State<MessageHistory> {
               subtitle: Column(
                 children: _messages[index]
                     .content
-                    .split('-')
+                    .split('\r\n')
                     .map((e) => Text(e))
                     .toList(),
                 crossAxisAlignment: CrossAxisAlignment.start,

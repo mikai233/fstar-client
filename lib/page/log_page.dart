@@ -106,7 +106,7 @@ class _LogPageState extends State<LogPage> {
   }
 
   _buildDescription(String description) {
-    var descriptions = description.split('-');
+    var descriptions = description.split('\r\n');
     return descriptions.map((e) => Text(e)).toList();
   }
 }
