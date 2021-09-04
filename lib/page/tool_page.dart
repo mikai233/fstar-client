@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_interactional_widget/flutter_interactional_widget.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:fstar/model/identity_enum.dart';
@@ -185,17 +186,24 @@ class ToolPage extends StatelessWidget {
                   Tuple2(data.showToolBackground, data.toolBackgroundPath),
               builder: (_, data, __) {
                 return data.item1
-                    ? data.item2 != null
-                        ? Image.file(
-                            File(data.item2),
-                            filterQuality: FilterQuality.high,
-                            fit: BoxFit.cover,
-                          )
-                        : Image.asset(
-                            'images/3.jpg',
-                            filterQuality: FilterQuality.high,
-                            fit: BoxFit.cover,
-                          )
+                    ? InteractionalWidget(
+                        maxAngleX: 30,
+                        maxAngleY: 80,
+                        backgroundScale: 1.1,
+                        width: MediaQuery.of(context).size.width,
+                        height: 250.0,
+                        backgroundWidget: data.item2 != null
+                            ? Image.file(
+                                File(data.item2),
+                                filterQuality: FilterQuality.high,
+                                fit: BoxFit.cover,
+                              )
+                            : Image.asset(
+                                'images/3.jpg',
+                                filterQuality: FilterQuality.high,
+                                fit: BoxFit.cover,
+                              ),
+                      )
                     : SizedBox();
               },
             ),

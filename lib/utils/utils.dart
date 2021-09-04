@@ -1402,6 +1402,7 @@ Future<void> showMessage(BuildContext context) async {
     AwesomeDialog(
         context: context,
         dialogType: DialogType.INFO,
+        headerAnimationLoop: false,
         body: Container(
           height: MediaQuery.of(context).size.height / 3,
           child: ScrollConfiguration(
@@ -1506,7 +1507,7 @@ Future<bool> showCheckVersion(BuildContext context) async {
             children: [
               Center(
                 child: Text(
-                  '新版本',
+                  '新版本 ${changelog.version}',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
               ),

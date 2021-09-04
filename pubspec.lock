@@ -314,6 +314,15 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "5.3.2"
+  flutter_interactional_widget:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: HEAD
+      resolved-ref: bf95c137b726f38212b91bf7dfa6fade97451b8c
+      url: "https://github.com/mikai233/flutter_interactional_widget"
+    source: git
+    version: "1.0.0"
   flutter_localizations:
     dependency: "direct main"
     description: flutter
@@ -598,6 +607,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.0.0"
+  nayuta_sensors:
+    dependency: transitive
+    description:
+      name: nayuta_sensors
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.0.1"
   nested:
     dependency: transitive
     description:
@@ -745,6 +761,20 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "3.0.1"
+  sensors_plus_platform_interface:
+    dependency: transitive
+    description:
+      name: sensors_plus_platform_interface
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.1.0"
+  sensors_plus_web:
+    dependency: transitive
+    description:
+      name: sensors_plus_web
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.1.0"
   shared_preferences:
     dependency: "direct main"
     description:

@@ -1018,6 +1018,13 @@ class _SettingsPage extends State<SettingsPage> {
         },
       ),
       ListTile(
+        title: Text('背景图片许可'),
+        trailing: Icon(Icons.chevron_right),
+        onTap: () {
+          EasyLoading.showToast('暂未联系到作者，如有侵权请联系开发者删除');
+        },
+      ),
+      ListTile(
         title: Text('许可'),
         trailing: Icon(Icons.chevron_right),
         onTap: () {

@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_interactional_widget/flutter_interactional_widget.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:fstar/model/rank_data.dart';
 import 'package:fstar/model/score_data.dart';
@@ -55,13 +56,12 @@ class _ScorePageState extends State<ScorePage>
     gpa.insert(0, '必修绩点');
     _semesterCount = _getSemesterCount(widget.scoreData);
     _floatingController =
-        AnimationController(duration: Duration(milliseconds: 500), vsync: this);
-    CurvedAnimation(parent: _floatingController, curve: Curves.bounceOut);
+        AnimationController(duration: Duration(milliseconds: 250), vsync: this);
+    CurvedAnimation(parent: _floatingController, curve: Curves.easeInOut);
     _showButton = false;
     _position = Offset(0, 210);
     _rendered = false;
-    _selectedCourse = List(widget.scoreData.length);
-    _selectedCourse.fillRange(0, widget.scoreData.length, false);
+    _selectedCourse = List.filled(widget.scoreData.length, false);
     _isCheckedAll = false;
     _isCrossing = false;
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -566,17 +566,24 @@ class _ScorePageState extends State<ScorePage>
             fit: StackFit.expand,
             children: <Widget>[
               if (data.item1)
-                data.item2 == null
-                    ? Image.asset(
-                        'images/1.jpg',
-                        fit: BoxFit.cover,
-                        filterQuality: FilterQuality.high,
-                      )
-                    : Image.file(
-                        File(data.item2),
-                        fit: BoxFit.cover,
-                        filterQuality: FilterQuality.high,
-                      ),
+                InteractionalWidget(
+                  maxAngleX: 30,
+                  maxAngleY: 80,
+                  width: MediaQuery.of(context).size.width,
+                  height: _semesterCount * 26 + 200.0,
+                  backgroundScale: 1.1,
+                  backgroundWidget: data.item2 == null
+                      ? Image.asset(
+                          'images/1.jpg',
+                          fit: BoxFit.cover,
+                          filterQuality: FilterQuality.high,
+                        )
+                      : Image.file(
+                          File(data.item2),
+                          fit: BoxFit.cover,
+                          filterQuality: FilterQuality.high,
+                        ),
+                ),
               Center(
                 child: BlurRectWidget(
                   widget: Column(
