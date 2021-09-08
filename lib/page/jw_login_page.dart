@@ -1,11 +1,9 @@
 import 'dart:ui';
 
 import 'package:awesome_dialog/awesome_dialog.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:fstar/model/application.dart';
 import 'package:fstar/model/box_name.dart';
 import 'package:fstar/model/course_map.dart';

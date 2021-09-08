@@ -561,7 +561,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "0c2d22cf3bd67cb9a3be4ea3ef8f7d2fbacf4e13"
+      resolved-ref: "568ae77c24b84fb03053d888386c7ee806189183"
       url: "https://github.com/mikai233/just.git"
     source: git
     version: "2.0.0"
