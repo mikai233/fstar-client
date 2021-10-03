@@ -161,15 +161,13 @@ class _JwLoginState extends State<JwLogin> with WidgetsBindingObserver {
                         uri: uri,
                         controller: controller,
                         settingsData: _settings,
-                        args: Tuple2(
-                            userData.serviceAccount, userData.servicePassword),
+                        args: Tuple2(username, password),
                       );
                       serviceHomeToJwHome(
                           uri: uri,
                           controller: controller,
                           settingsData: _settings,
-                          args: Tuple3(userData, _usernameController.text,
-                              _passwordController.text));
+                          args: Tuple3(userData, username, password));
                       jwHomeToCourse(
                           uri: uri,
                           controller: controller,

@@ -1685,11 +1685,13 @@ void serviceLoginToServiceHome(
     @required Tuple2<String, String> args}) {
   if (uri.path == Uri.parse(settingsData.serviceHallLoginUrl).path) {
     Log.logger.i('进入信息门户登录页');
-    controller.evaluateJavascript(source: '''
+    Future.delayed(Duration(milliseconds: 500)).then((value) {
+      controller.evaluateJavascript(source: '''
                       document.querySelector("#username").value="${args.item1}";
                       document.querySelector("#password").value="${args.item2}";
                       document.querySelector("#passbutton").click()
                       ''');
+    });
   }
 }
 
