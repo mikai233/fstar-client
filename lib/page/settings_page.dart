@@ -420,6 +420,44 @@ class _SettingsPage extends State<SettingsPage> {
               onTap: _onSystemModeTap,
             ),
           ),
+          Selector<SettingsData, String>(
+            selector: (_, data) => data.currentSemester,
+            builder: (BuildContext context, value, Widget child) {
+              return ListTile(
+                title: Text('手动校正学期'),
+                trailing: Container(
+                  height: 40,
+                  width: MediaQuery.of(context).size.width / 2,
+                  child: TextField(
+                    focusNode: _focusNode,
+                    controller: _editingController,
+                    decoration: InputDecoration(
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 8),
+                      filled: true,
+                      fillColor: isDarkMode(context)
+                          ? Theme.of(context).backgroundColor
+                          : Color.fromRGBO(240, 240, 240, 1),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20),
+                          borderSide: BorderSide.none),
+                      suffix: TextButton(
+                        onPressed: () {
+                          if (_editingController.text.isNotEmpty) {
+                            _focusNode.unfocus();
+                            context.read<SettingsData>()
+                              ..currentSemester = _editingController.text
+                              ..save();
+                          }
+                        },
+                        child: Text('确定'),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
         ]);
         break;
       // case IdentityType.teacher:

@@ -50,6 +50,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tuple/tuple.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:html/parser.dart';
 
 enum FPlatform {
   android,
@@ -1889,5 +1890,89 @@ void onSyHome(
       ..save();
     Navigator.pop(context);
     Navigator.pop(context);
+  }
+}
+
+///信息门户主页跳转到新研究生系统主页
+///如果[args]不为空，表示是验证账号阶段，把账号信息存入Hive
+void serviceHomeToYjsHome(
+    {@required Uri uri,
+    @required InAppWebViewController controller,
+    @required SettingsData settingsData,
+    Tuple3<UserData, String, String> args}) {
+  if (uri.toString() == settingsData.serviceHomeUrl) {
+    Log.logger.i('进入信息门户主页');
+    if (args != null) {
+      args.item1
+        ..serviceAccount = args.item2
+        ..servicePassword = args.item3
+        ..userNumber = args.item2
+        ..save();
+    }
+    controller.evaluateJavascript(source: '''
+                          window.location.href="${settingsData.yjsClickUrl}";
+                          ''');
+  }
+}
+
+///获取学期信息
+///获取课表信息
+void yjsHome2SemesterPage(
+    {@required Uri uri, @required InAppWebViewController controller}) {
+  if (uri.toString().contains('/gmis5/student/default/index')) {
+    controller.evaluateJavascript(source: '''
+                          window.location.href="https://client.v.just.edu.cn/http/webvpnd0439d4987464015a7b80a80137c8817/gmis5/student/default/bindterm?_=${DateTime.now().millisecondsSinceEpoch}&enlink-vpn";
+                          ''');
+  }
+}
+
+Future<String> onSemesterPage(
+    {@required Uri uri,
+    @required InAppWebViewController controller,
+    @required SettingsData settingsData}) async {
+  if (uri.toString().contains('/gmis5/student/default/bindterm')) {
+    var html = await controller.getHtml();
+    var json = JsonDecoder().convert(parse(html).body.text) as List<dynamic>;
+    var code = '';
+    json.forEach((element) {
+      var term =
+          element['termname'].replaceAll('秋学期', '-1').replaceAll('春学期', '-2');
+      if (term == settingsData.currentSemester) {
+        code = element['termcode'];
+      }
+    });
+    return code;
+  } else {
+    return null;
+  }
+}
+
+void onYjsCoursePage(
+    {@required Uri uri,
+    @required InAppWebViewController controller,
+    @required String termcode}) async {
+  controller.evaluateJavascript(source: '''
+  $postFunction
+  httpPost("https://client.v.just.edu.cn/http/webvpnd0439d4987464015a7b80a80137c8817/gmis5/student/pygl/py_kbcx_ew?enlink-vpn", {"kblx":"xs", "termcode":"$termcode"})
+  ''');
+}
+
+void onYjsCourse(
+    {@required Uri uri,
+    @required InAppWebViewController controller,
+    BuildContext context}) async {
+  if (uri.toString().contains('/gmis5/student/pygl/py_kbcx_ew')) {
+    try {
+      Application.courseParser.action(await controller.getHtml());
+      context.read<CourseMap>()
+        ..clearCourse()
+        ..addCourseByList(Application.courseParser.courseList)
+        ..save();
+      await Future.delayed(Duration(milliseconds: 200));
+      EasyLoading.showToast('课表获取成功');
+      Navigator.pushNamedAndRemoveUntil(context, '/', (route) => route == null);
+    } catch (e) {
+      EasyLoading.showError(e.toString());
+    }
   }
 }

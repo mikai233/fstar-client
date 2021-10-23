@@ -716,8 +716,22 @@ class ToolPage extends StatelessWidget {
           EasyLoading.dismiss();
           break;
         case SystemMode.VPN2:
-          // TODO: Handle this case.
-          EasyLoading.showToast('待实现');
+          final webview = FStarWebView(
+            url: 'https://vpn2.just.edu.cn',
+            onLoadComplete: (controller, uri) async {
+              Log.logger.i(uri.toString());
+              serviceLoginToServiceHome(
+                uri: uri,
+                controller: controller,
+                settingsData: settings,
+                args: Tuple2(user.serviceAccount, user.servicePassword),
+              );
+              serviceHomeToYjsHome(
+                  uri: uri, controller: controller, settingsData: settings);
+            },
+          );
+          pushPage(context, webview);
+          EasyLoading.dismiss();
           break;
         case SystemMode.CLOUD:
           // TODO: Handle this case.

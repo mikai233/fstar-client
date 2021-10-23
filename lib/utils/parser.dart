@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fstar/model/course_data.dart';
@@ -5,6 +7,7 @@ import 'package:fstar/model/score_data.dart';
 import 'package:fstar/model/sport_score_data.dart';
 import 'package:fstar/utils/utils.dart';
 import 'package:html/parser.dart';
+import 'package:collection/collection.dart' show ListEquality;
 
 abstract class Parser {}
 
@@ -143,78 +146,91 @@ class GraduateCourseParser extends DefaultCourseParser {
   @override
   void action(String content) {
     super._clear();
-    final document = parse(content);
-    final nameElement = document.querySelector('#ptHeader_lblUName');
-    final nameRegex = RegExp('当前用户：(.*)');
-    _studentName = nameRegex.firstMatch(nameElement.text).group(1).trim();
-    //课表
-    final trs = document.querySelectorAll('#DataGrid1 tr');
-    for (int i = 1; i < trs.length; ++i) {
-      final contents = trs[i].querySelectorAll('td');
-      final filterResult = contents.where((element) {
-        if (element.text != '上午' &&
-            element.text != '下午' &&
-            element.text != '晚上' &&
-            (element.text.trim().isEmpty ||
-                int.tryParse(element.text) == null)) {
-          return true;
-        } else {
-          return false;
+    var regex = RegExp(r'(.*?)\[(.*?)周\](.*?)\[(.*?)\]');
+    List<CourseData> courses = [];
+    (JsonDecoder().convert(parse(content).body.text)['rows'] as List<dynamic>)
+        .forEach((courseInfo) {
+      String mc = courseInfo['mc'];
+      var row = int.parse(mc.substring(2));
+      if (mc.contains('下午')) {
+        row += 4;
+      } else if (mc.contains('晚上')) {
+        row += 8;
+      }
+      String z1 = courseInfo['z1'];
+      String z2 = courseInfo['z2'];
+      String z3 = courseInfo['z3'];
+      String z4 = courseInfo['z4'];
+      String z5 = courseInfo['z5'];
+      String z6 = courseInfo['z6'];
+      String z7 = courseInfo['z7'];
+      var columns = [z1, z2, z3, z4, z5, z6, z7];
+      for (int i = 0; i < columns.length; i++) {
+        if (columns[i] == null) {
+          continue;
         }
-      }).toList();
-      filterResult.forEachIndexed((index, element) {
-        if (element.text.trim().isNotEmpty) {
-          final rowSpan = int.tryParse(element.attributes['rowspan']) ?? 2;
-          final courses = _parseTable(
-              innerHtml: element.innerHtml,
-              row: i,
-              column: index + 1,
-              rowSpan: rowSpan);
-          _courseList.addAll(courses);
+        var result = regex.firstMatch(columns[i]);
+        if (result == null) {
+          continue;
         }
-      });
-    }
-    getSettingsData().unusedCourseColorIndex = _colorIndex;
-  }
-
-  List<CourseData> _parseTable(
-      {@required String innerHtml,
-      @required int row,
-      @required int column,
-      @required int rowSpan}) {
-    final courses = <CourseData>[];
-    final eachContent = innerHtml.split('<br><br>');
-    int top = 0;
-    eachContent.forEach((element) {
-      final regex = RegExp(
-          r'课程:(.*?)<br>班级:(.*?)<br>\((.*?)\)<br>第(.*?)周; <br>主讲教师:(.*)');
-      final result = regex.firstMatch(element);
-      if (result != null) {
-        final name = result[1].trim();
-        final id = result[2].trim();
-        final room = result[3].trim();
-        final week = _parseRawWeek(result[4]);
-        final teacher = result[5].trim();
-        _idColorMap.putIfAbsent(id, () {
+        var name = result.group(1);
+        var weeks = _parseRawWeek(result.group(2));
+        var teacher = result.group(3);
+        var room = result.group(4);
+        _idColorMap.putIfAbsent(name, () {
           final colors = getColorList();
           return colors[_colorIndex++ % colors.length];
         });
-        final course = CourseData(
-            id: id,
+        final c = CourseData(
+            id: '',
             name: name,
             classroom: room,
-            week: week,
+            week: weeks,
             row: row,
-            rowSpan: rowSpan,
-            column: column,
+            rowSpan: 1,
+            column: i + 1,
             teacher: teacher,
-            defaultColor: _idColorMap[id],
+            defaultColor: _idColorMap[name],
             customColor: null,
-            top: top++);
-        courses.add(course);
+            top: 0);
+        courses.add(c);
       }
     });
-    return courses;
+    _remark = '';
+    _courseList = _mergeCourse(courses);
+    getSettingsData().unusedCourseColorIndex = _colorIndex;
+  }
+
+  List<CourseData> _mergeCourse(List<CourseData> courses) {
+    List<CourseData> mergedCourses = [];
+    var temp = courses;
+    var lq = ListEquality();
+    while (temp.isNotEmpty) {
+      var toMerge = temp.removeAt(0);
+      var removeList = [];
+      temp.forEach((c) {
+        if (c.column == toMerge.column &&
+            c.name == toMerge.name &&
+            c.classroom == toMerge.classroom &&
+            c.teacher == toMerge.teacher &&
+            lq.equals(c.week, toMerge.week)) {
+          if (c.row == toMerge.row - 1) {
+            toMerge = toMerge.copyWith(
+                row: toMerge.row - 1, rowSpan: toMerge.rowSpan + 1);
+            removeList.add(c);
+          }
+          if (c.row == toMerge.row + toMerge.rowSpan) {
+            toMerge = toMerge.copyWith(rowSpan: toMerge.rowSpan + 1);
+            removeList.add(c);
+          }
+        }
+      });
+      removeList.forEach((element) {
+        temp.remove(element);
+      });
+      mergedCourses.add(toMerge);
+    }
+    return mergedCourses;
   }
 }
 

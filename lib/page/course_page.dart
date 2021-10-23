@@ -7,6 +7,7 @@ import 'package:fstar/model/choose_week_header_status.dart';
 import 'package:fstar/model/course_map.dart';
 import 'package:fstar/model/date_today_data.dart';
 import 'package:fstar/model/fstar_mode_enum.dart';
+import 'package:fstar/model/identity_enum.dart';
 import 'package:fstar/model/settings_data.dart';
 import 'package:fstar/model/system_mode_enum.dart';
 import 'package:fstar/model/time_array_data.dart';
@@ -242,29 +243,61 @@ class _CoursePageState extends State<CoursePage>
         controller.refreshFailed();
         return;
       }
-      final webview = FStarWebView(
-        url: 'https://vpn2.just.edu.cn',
-        onLoadComplete: (controller, uri) async {
-          Log.logger.i(uri.toString());
-          serviceLoginToServiceHome(
-            uri: uri,
-            controller: controller,
-            settingsData: settings,
-            args: Tuple2(user.serviceAccount, user.servicePassword),
+      var identityType = settings.identityType;
+      switch (identityType) {
+        case IdentityType.undergraduate:
+          final webview = FStarWebView(
+            url: 'https://vpn2.just.edu.cn',
+            onLoadComplete: (controller, uri) async {
+              Log.logger.i(uri.toString());
+              serviceLoginToServiceHome(
+                uri: uri,
+                controller: controller,
+                settingsData: settings,
+                args: Tuple2(user.serviceAccount, user.servicePassword),
+              );
+              serviceHomeToJwHome(
+                  uri: uri, controller: controller, settingsData: settings);
+              jwHomeToCourse(
+                  uri: uri, controller: controller, settingsData: settings);
+              onCourse(
+                  uri: uri,
+                  controller: controller,
+                  context: context,
+                  settingsData: settings,
+                  userData: user);
+            },
           );
-          serviceHomeToJwHome(
-              uri: uri, controller: controller, settingsData: settings);
-          jwHomeToCourse(
-              uri: uri, controller: controller, settingsData: settings);
-          onCourse(
-              uri: uri,
-              controller: controller,
-              context: context,
-              settingsData: settings,
-              userData: user);
-        },
-      );
-      pushPage(context, webview);
+          pushPage(context, webview);
+          break;
+        case IdentityType.graduate:
+          final webview = FStarWebView(
+            url: 'https://vpn2.just.edu.cn',
+            onLoadComplete: (controller, uri) async {
+              Log.logger.i(uri.toString());
+              serviceLoginToServiceHome(
+                uri: uri,
+                controller: controller,
+                settingsData: settings,
+                args: Tuple2(user.serviceAccount, user.servicePassword),
+              );
+              serviceHomeToYjsHome(
+                  uri: uri, controller: controller, settingsData: settings);
+              yjsHome2SemesterPage(uri: uri, controller: controller);
+              onSemesterPage(
+                      uri: uri, controller: controller, settingsData: settings)
+                  .then((code) {
+                if (code != null) {
+                  onYjsCoursePage(
+                      uri: uri, controller: controller, termcode: code);
+                }
+              });
+              onYjsCourse(uri: uri, controller: controller, context: context);
+            },
+          );
+          pushPage(context, webview);
+          break;
+      }
       controller.refreshCompleted();
       return;
     }

@@ -196,48 +196,48 @@ class _JwLoginState extends State<JwLogin> with WidgetsBindingObserver {
               switch (_settings.systemMode) {
                 case SystemMode.JUST:
                   {
-                    EasyLoading.show(status: '正在验证');
-                    await YJS.instance
-                        .validate(username: username, password: password);
-                    await Future.delayed(Duration(milliseconds: 200));
-                    EasyLoading.dismiss();
-                    userData
-                      ..jwAccount = username
-                      ..jwPassword = password
-                      ..userNumber = username;
+                    EasyLoading.showToast('待实现');
+                    return;
                   }
                   break;
                 case SystemMode.VPN:
                   {
-                    {
-                      final vpnUsername = _vpnUsernameController.text;
-                      final vpnPassword = _vpnPasswordController.text;
-                      EasyLoading.show(status: '正在验证VPN');
-                      await Future.delayed(Duration(milliseconds: 200));
-                      await YJS_VPN.instance.validateVPN(
-                          username: vpnUsername, password: vpnPassword);
-                      EasyLoading.dismiss();
-                      await Future.delayed(Duration(milliseconds: 200));
-                      await YJS_VPN.instance.validate(
-                          username: username,
-                          password: password,
-                          vpnUsername: vpnUsername,
-                          vpnPassword: vpnPassword);
-                      EasyLoading.show(status: '正在验证研究生系统账号');
-                      await Future.delayed(Duration(milliseconds: 200));
-                      EasyLoading.dismiss();
-                      userData
-                        ..vpnAccount = vpnUsername
-                        ..vpnPassword = vpnPassword
-                        ..jwAccount = username
-                        ..jwPassword = password
-                        ..userNumber = username;
-                    }
+                    EasyLoading.showToast('待实现');
+                    return;
                   }
                   break;
                 case SystemMode.VPN2:
-                  // TODO: Handle this case.
-                  EasyLoading.showToast('待实现');
+                  final webview = FStarWebView(
+                    url: 'https://vpn2.just.edu.cn',
+                    onLoadComplete: (controller, uri) async {
+                      Log.logger.i(uri.toString());
+                      serviceLoginToServiceHome(
+                        uri: uri,
+                        controller: controller,
+                        settingsData: _settings,
+                        args: Tuple2(username, password),
+                      );
+                      serviceHomeToYjsHome(
+                          uri: uri,
+                          controller: controller,
+                          settingsData: _settings,
+                          args: Tuple3(userData, username, password));
+                      yjsHome2SemesterPage(uri: uri, controller: controller);
+                      onSemesterPage(
+                              uri: uri,
+                              controller: controller,
+                              settingsData: _settings)
+                          .then((code) {
+                        if (code != null) {
+                          onYjsCoursePage(
+                              uri: uri, controller: controller, termcode: code);
+                        }
+                      });
+                      onYjsCourse(
+                          uri: uri, controller: controller, context: context);
+                    },
+                  );
+                  pushPage(context, webview);
                   return;
                   break;
                 case SystemMode.CLOUD:
@@ -299,7 +299,7 @@ class _JwLoginState extends State<JwLogin> with WidgetsBindingObserver {
                   )),
             ),
             if (_settings.systemMode == SystemMode.JUST ||
-                _settings.systemMode == SystemMode.VPN)
+                _settings.systemMode == SystemMode.VPN2)
               Container(
                 height: 30,
                 margin: const EdgeInsets.symmetric(vertical: 4),

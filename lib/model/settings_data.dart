@@ -148,9 +148,17 @@ class SettingsData extends HiveObject with ChangeNotifier {
   String syHomeUrl =
       'https://client.v.just.edu.cn/http/webvpne73681c95b0d384ea01cc5f6576497e6/sy/student/xsDefault.aspx';
   @HiveField(51)
-  String jwClickUrl = 'https://client.v.just.edu.cn/http/webvpneb26120c0b61d26f61ce45ea5ef07bf864a455884ca2133c138748630669de2c/sso.jsp';
+  String jwClickUrl =
+      'https://client.v.just.edu.cn/http/webvpneb26120c0b61d26f61ce45ea5ef07bf864a455884ca2133c138748630669de2c/sso.jsp';
   @HiveField(52)
-  String syClickUrl = 'https://client.v.just.edu.cn/http/webvpne73681c95b0d384ea01cc5f6576497e6/sy/';
+  String syClickUrl =
+      'https://client.v.just.edu.cn/http/webvpne73681c95b0d384ea01cc5f6576497e6/sy/';
+
+  //硬编码了，没有存库的必要
+  String yjsClickUrl =
+      'https://client.v.just.edu.cn/http/webvpne2a76b239e0b8ee86860f59b72de0f9a76efd58b4b9a30c1613964620044041c/gmis5/oauthlogin/jskjdx?_p=YXM9MiZ0PTImZD0xMDEmcD0xJmY9MzAmbT1OJg__&_l=&_t=';
+  String yjsHomeUrl =
+      'https://client.v.just.edu.cn/http/webvpnd0439d4987464015a7b80a80137c8817/gmis5/student/default/index';
 
   DateTime get dayFlag => _dayFlag;
 
