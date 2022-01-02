@@ -348,9 +348,6 @@ class _JwLoginState extends State<JwLogin> with WidgetsBindingObserver {
                           onFieldSubmitted: (value) {
                             _vpnPasswordFocusNode.requestFocus();
                           },
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly
-                          ],
                           keyboardType: TextInputType.phone,
                           controller: _vpnUsernameController,
                           focusNode: _vpnUsernameFocusNode,
@@ -417,9 +414,6 @@ class _JwLoginState extends State<JwLogin> with WidgetsBindingObserver {
                         onFieldSubmitted: (value) {
                           _passwordFocusNode.requestFocus();
                         },
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly
-                        ],
                         controller: _usernameController,
                         focusNode: _usernameFocusNode,
                         onSaved: (value) {

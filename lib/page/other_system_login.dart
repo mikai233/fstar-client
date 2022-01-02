@@ -261,9 +261,6 @@ class _OtherLoginState extends State<OtherLogin> with WidgetsBindingObserver {
                         onFieldSubmitted: (value) {
                           _passwordFocusNode.requestFocus();
                         },
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly
-                        ],
                         keyboardType: TextInputType.phone,
                         controller: _usernameController,
                         focusNode: _usernameFocusNode,
